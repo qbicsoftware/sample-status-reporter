@@ -1,7 +1,6 @@
 package life.qbic.samplestatus.reporter.services
 
 import life.qbic.samplestatus.reporter.Location
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
@@ -17,7 +16,7 @@ import javax.annotation.PostConstruct
  */
 @Component
 @ConfigurationProperties
-class QbicSampleTrackingService implements SampleTrackingService{
+class QbicSampleTrackingService implements SampleTrackingService {
 
     @Value('${service.sampletracking.url}')
     private String sampleTrackingBaseUrl

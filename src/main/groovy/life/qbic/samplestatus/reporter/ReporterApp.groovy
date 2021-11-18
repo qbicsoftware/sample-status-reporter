@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContext
  * @since 0.1.0
  */
 @SpringBootApplication
-class ReporterApp implements CommandLineRunner{
+class ReporterApp implements CommandLineRunner {
 
     @Autowired
     ApplicationContext applicationContext
@@ -29,7 +29,7 @@ class ReporterApp implements CommandLineRunner{
     void run(String... args) throws Exception {
         LocationService locationService = applicationContext.getBean("locationService", LocationService.class)
         Location location = locationService.getCurrentLocation()
-                .orElseThrow({throw new ReporterAppException("No current location found!")})
+                .orElseThrow({ throw new ReporterAppException("No current location found!") })
         println location
     }
 
@@ -37,6 +37,7 @@ class ReporterApp implements CommandLineRunner{
         ReporterAppException() {
             super()
         }
+
         ReporterAppException(String message) {
             super(message)
         }
