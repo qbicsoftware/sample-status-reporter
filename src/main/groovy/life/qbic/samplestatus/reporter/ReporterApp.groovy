@@ -27,7 +27,7 @@ class ReporterApp implements CommandLineRunner {
 
     @Override
     void run(String... args) throws Exception {
-        LocationService locationService = applicationContext.getBean("locationService", LocationService.class)
+        LocationService locationService = applicationContext.getBean("ncctLocationService", LocationService.class)
         Location location = locationService.getCurrentLocation()
                 .orElseThrow({ throw new ReporterAppException("No current location found!") })
         println location
