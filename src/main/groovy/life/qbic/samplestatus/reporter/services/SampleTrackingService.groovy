@@ -1,4 +1,6 @@
-package life.qbic.samplestatus.reporter
+package life.qbic.samplestatus.reporter.services
+
+import life.qbic.samplestatus.reporter.Location
 
 /**
  * <b>Provides access to the sample tracking persistence layer.</b>
