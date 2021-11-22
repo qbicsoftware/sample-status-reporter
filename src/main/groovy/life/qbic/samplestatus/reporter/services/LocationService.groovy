@@ -1,6 +1,6 @@
 package life.qbic.samplestatus.reporter.services
 
-import life.qbic.samplestatus.reporter.Location
+import life.qbic.samplestatus.reporter.api.Location
 
 /**
  * <b><short description></b>

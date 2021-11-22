@@ -1,6 +1,6 @@
 package life.qbic.samplestatus.reporter.services
 
-import life.qbic.samplestatus.reporter.Location
+import life.qbic.samplestatus.reporter.api.Location
 
 /**
  * <b>Provides access to the sample tracking persistence layer.</b>
@@ -18,7 +18,7 @@ interface SampleTrackingService {
      * @return the location that this user is associated with
      * @since 1.0.0
      */
-    Location getLocationForUser(String userId)
+    Optional<Location> getLocationForUser(String userId)
 
 
 }

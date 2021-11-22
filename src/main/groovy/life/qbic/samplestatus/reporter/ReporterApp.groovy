@@ -1,6 +1,6 @@
 package life.qbic.samplestatus.reporter
 
-
+import life.qbic.samplestatus.reporter.api.Location
 import life.qbic.samplestatus.reporter.services.LocationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
@@ -29,7 +29,7 @@ class ReporterApp implements CommandLineRunner {
     void run(String... args) throws Exception {
         LocationService locationService = applicationContext.getBean("ncctLocationService", LocationService.class)
         Location location = locationService.getCurrentLocation()
-                .orElseThrow({ throw new ReporterAppException("No current location found!") })
+                .orElseThrow({ new ReporterAppException("No current location found!") })
         println location
     }
 

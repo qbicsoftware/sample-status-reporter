@@ -1,7 +1,8 @@
 package life.qbic.samplestatus.reporter.services
 
 import groovy.json.JsonSlurper
-import life.qbic.samplestatus.reporter.Location
+import life.qbic.samplestatus.reporter.api.Address
+import life.qbic.samplestatus.reporter.api.Location
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
@@ -10,7 +11,6 @@ import javax.annotation.PostConstruct
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.time.Duration
 
 /**
  * <class short description - 1 Line!>
@@ -37,17 +37,25 @@ class QbicSampleTrackingService implements SampleTrackingService {
 
     private String fullEndpointPath
 
+    private static final LOCATION_NAME = "name"
+    private static final LOCATION_CONTACT = "responsible_person"
+    private static final LOCATION_CONTACT_EMAIL = "responsible_person_email"
+    private static final LOCATION_ADDRESS = "address"
+    private static final ADDRESS_AFFILIATION = "affiliation"
+    private static final ADDRESS_STREET = "street"
+    private static final ADDRESS_ZIP = "zip_code"
+    private static final ADDRESS_COUNTRY = "country"
+
     @PostConstruct
     void initService() {
         fullEndpointPath = sampleTrackingBaseUrl + locationEndpoint
     }
 
     @Override
-    Location getLocationForUser(String userId) {
+    Optional<Location> getLocationForUser(String userId) {
         URI requestURI = createURI(userId)
-        println requestURI
         HttpResponse response = requestLocation(requestURI)
-        return parseLocationOfJson(response.body())
+        return Optional.ofNullable(parseLocationOfJson(response.body()))
     }
 
     private URI createURI(String userId) {
@@ -56,23 +64,39 @@ class QbicSampleTrackingService implements SampleTrackingService {
 
     private HttpResponse requestLocation(URI requestURI) {
         HttpRequest request = HttpRequest.newBuilder().GET().uri(requestURI).build()
-        println serviceUser
-        println servicePassword
         HttpClient client = HttpClient.newBuilder()
                 .authenticator(new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(serviceUser, servicePassword.toCharArray())
                     }
-                })
-                .build()
-        println client.send(request, HttpResponse.BodyHandlers.ofString())
-        return null
+                }).build()
+        return client.send(request, HttpResponse.BodyHandlers.ofString())
     }
 
     private static Location parseLocationOfJson(String putativeLocationJson) {
-        Map locationMap = new JsonSlurper().parseText(putativeLocationJson) as Map
-        println locationMap
-        return null
+        if (putativeLocationJson == null || putativeLocationJson.isEmpty()) {
+            return null
+        }
+        ArrayList<Map> locationMap = new JsonSlurper().parseText(putativeLocationJson) as ArrayList<Map>
+        return convertMapToLocation(locationMap.get(0))
+    }
+
+    private static Location convertMapToLocation(Map locationMap) {
+        Location location = new Location()
+        location.label = locationMap.get(LOCATION_NAME) ?: ""
+        location.contactPerson = locationMap.get(LOCATION_CONTACT) ?: ""
+        location.contactEmail = locationMap.get(LOCATION_CONTACT_EMAIL) ?: ""
+        location.address = convertMapToAddress(locationMap.get(LOCATION_ADDRESS) as Map)
+        return location
+    }
+
+    private static Address convertMapToAddress(Map addressMap) {
+        Address address = new Address()
+        address.affiliation = addressMap.get(ADDRESS_AFFILIATION) ?: ""
+        address.street = addressMap.get(ADDRESS_STREET) ?: ""
+        address.zipCode = addressMap.get(ADDRESS_ZIP) ?: ""
+        address.country = addressMap.get(ADDRESS_COUNTRY) ?: ""
+        return address
     }
 }
