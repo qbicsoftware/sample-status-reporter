@@ -1,6 +1,5 @@
 package life.qbic.samplestatus.reporter
 
-import life.qbic.datamodel.samples.Status
 import java.util.Date
 
 /**
@@ -13,6 +12,6 @@ import java.util.Date
 class SampleUpdate {
 
     Sample sample
-    Status updatedStatus
+    String updatedStatus
     Date modificationDate
 }
