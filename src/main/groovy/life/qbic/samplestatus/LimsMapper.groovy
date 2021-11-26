@@ -28,23 +28,23 @@ class LimsMapper {
         life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleBarcode)
         
         Date modificationDate = sample.getModificationDate()
-        Status sampleStatus = parseSampleStatus(properties.get("SAMPLE_STATUS"))
+        Status sampleStatus = mapSampleStatus(properties.get("SAMPLE_STATUS"))
 
         return new SampleUpdate(sample = sample, updatedStatus = sampleStatus, modificationDate = modificationDate)
     }
 
-    private Status parseSampleStatus(String statusString) {
+    private String mapSampleStatus(String statusString) {
         switch (statusString) {
             case "SAMPLE_RECEIVED":
                 return statusString
             case "QC_PASSED":
-                return Status.SAMPLE_QC_PASS
+                return "SAMPLE_QC_PASS"
             case "QC_FAILED":
-                return Status.SAMPLE_QC_FAIL
+                return "SAMPLE_QC_FAIL"
             case "LIBRARY_PREP_FINISHED":
                 return statusString
             default:
-                return Status.METADATA_REGISTERED
+                return "METADATA_REGISTERED"
             }
     }
 }
