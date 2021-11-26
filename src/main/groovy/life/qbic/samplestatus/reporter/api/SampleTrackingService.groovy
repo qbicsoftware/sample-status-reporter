@@ -1,4 +1,4 @@
-package life.qbic.samplestatus.reporter.services
+package life.qbic.samplestatus.reporter.api
 
 import life.qbic.samplestatus.reporter.api.Location
 

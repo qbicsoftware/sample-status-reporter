@@ -1,6 +1,8 @@
 package life.qbic.samplestatus.reporter.services
 
 import life.qbic.samplestatus.reporter.api.Location
+import life.qbic.samplestatus.reporter.api.LocationService
+import life.qbic.samplestatus.reporter.api.SampleTrackingService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties

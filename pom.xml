@@ -53,7 +53,56 @@
 			<version>2.0-groovy-3.0</version>
 			<scope>test</scope>
 		</dependency>
+
+   <!-- OpenBIS API V3 dependency to interact with the LIMS -->
+		<dependency>
+			<groupId>life.qbic</groupId>
+			<artifactId>openbis-api</artifactId>
+			<version>19.06.5</version>
+		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>maven-central</id>
+			<name>Maven central</name>
+			<url>https://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>nexus-snapshots</id>
+			<name>QBiC Snapshots</name>
+			<url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-snapshots</url>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>nexus-releases</id>
+			<name>QBiC Releases</name>
+			<url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-releases</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
