@@ -37,15 +37,6 @@ class QbicSampleTrackingService implements SampleTrackingService {
 
     private String fullEndpointPath
 
-    private static final LOCATION_NAME = "name"
-    private static final LOCATION_CONTACT = "responsible_person"
-    private static final LOCATION_CONTACT_EMAIL = "responsible_person_email"
-    private static final LOCATION_ADDRESS = "address"
-    private static final ADDRESS_AFFILIATION = "affiliation"
-    private static final ADDRESS_STREET = "street"
-    private static final ADDRESS_ZIP = "zip_code"
-    private static final ADDRESS_COUNTRY = "country"
-
     @PostConstruct
     void initService() {
         fullEndpointPath = sampleTrackingBaseUrl + locationEndpoint
@@ -55,7 +46,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
     Optional<Location> getLocationForUser(String userId) {
         URI requestURI = createURI(userId)
         HttpResponse response = requestLocation(requestURI)
-        return Optional.ofNullable(parseLocationOfJson(response.body()))
+        return parseLocationOfJson(response.body())
     }
 
     private URI createURI(String userId) {
@@ -74,29 +65,42 @@ class QbicSampleTrackingService implements SampleTrackingService {
         return client.send(request, HttpResponse.BodyHandlers.ofString())
     }
 
-    private static Location parseLocationOfJson(String putativeLocationJson) {
-        if (putativeLocationJson == null || putativeLocationJson.isEmpty()) {
-            return null
+    private static Optional<Location> parseLocationOfJson(String putativeLocationJson) {
+        List<Map> locationMaps = parseJsonToList(putativeLocationJson )
+        return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst()
+    }
+
+    private static List<Map<?, ?>> parseJsonToList(String json) {
+        return new JsonSlurper().parseText(json) as ArrayList<Map>
+    }
+
+    private static class DtoMapper {
+
+        private static final LOCATION_NAME = "name"
+        private static final LOCATION_CONTACT = "responsible_person"
+        private static final LOCATION_CONTACT_EMAIL = "responsible_person_email"
+        private static final LOCATION_ADDRESS = "address"
+        private static final ADDRESS_AFFILIATION = "affiliation"
+        private static final ADDRESS_STREET = "street"
+        private static final ADDRESS_ZIP = "zip_code"
+        private static final ADDRESS_COUNTRY = "country"
+
+        private static Location convertMapToLocation(Map locationMap) {
+            Location location = new Location()
+            location.label = locationMap.get(LOCATION_NAME) ?: ""
+            location.contactPerson = locationMap.get(LOCATION_CONTACT) ?: ""
+            location.contactEmail = locationMap.get(LOCATION_CONTACT_EMAIL) ?: ""
+            location.address = convertMapToAddress(locationMap.get(LOCATION_ADDRESS) as Map)
+            return location
         }
-        ArrayList<Map> locationMap = new JsonSlurper().parseText(putativeLocationJson) as ArrayList<Map>
-        return convertMapToLocation(locationMap.get(0))
-    }
 
-    private static Location convertMapToLocation(Map locationMap) {
-        Location location = new Location()
-        location.label = locationMap.get(LOCATION_NAME) ?: ""
-        location.contactPerson = locationMap.get(LOCATION_CONTACT) ?: ""
-        location.contactEmail = locationMap.get(LOCATION_CONTACT_EMAIL) ?: ""
-        location.address = convertMapToAddress(locationMap.get(LOCATION_ADDRESS) as Map)
-        return location
-    }
-
-    private static Address convertMapToAddress(Map addressMap) {
-        Address address = new Address()
-        address.affiliation = addressMap.get(ADDRESS_AFFILIATION) ?: ""
-        address.street = addressMap.get(ADDRESS_STREET) ?: ""
-        address.zipCode = addressMap.get(ADDRESS_ZIP) ?: ""
-        address.country = addressMap.get(ADDRESS_COUNTRY) ?: ""
-        return address
+        private static Address convertMapToAddress(Map addressMap) {
+            Address address = new Address()
+            address.affiliation = addressMap.get(ADDRESS_AFFILIATION) ?: ""
+            address.street = addressMap.get(ADDRESS_STREET) ?: ""
+            address.zipCode = addressMap.get(ADDRESS_ZIP) ?: ""
+            address.country = addressMap.get(ADDRESS_COUNTRY) ?: ""
+            return address
+        }
     }
 }
