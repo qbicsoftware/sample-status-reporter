@@ -38,16 +38,21 @@ class RealLimsQueryService implements LimsQueryService {
      * then the property <code>service.openbis.password</code> that maps to the parameter <code>openbisPassword</code>
      * and finally the property <code>service.openbis.api-server-url</code> that maps to the parameter <code>applicationServerUrl</code>.</p>
      *
+     * <p>We also let you configure the server timeout, which uses the application property <code>service.openbis.server-timeout</code>
+     * and maps it to the parameter <code>serverTimeout</code>.
+     *
      * @param openbisUser the openBIS user id
      * @param openbisPassword the openBIS user password
      * @param applicationServerUrl the openBIS application server url
+     * @param serverTimeout the server connection timeout
      */
     RealLimsQueryService(@Value('${service.openbis.user}') String openbisUser,
                          @Value('${service.openbis.password}') String openbisPassword,
-                         @Value('${service.openbis.api-server-url}') String applicationServerUrl) {
+                         @Value('${service.openbis.api-server-url}') String applicationServerUrl,
+                         @Value('${service.openbis.server-timeout}') Integer serverTimeout) {
         this.openBisApplicationServerApi = HttpInvokerUtils.createServiceStub(
                 IApplicationServerApi.class,
-                applicationServerUrl + IApplicationServerApi.SERVICE_URL, 10000)
+                applicationServerUrl + IApplicationServerApi.SERVICE_URL, serverTimeout)
         sessionToken = this.openBisApplicationServerApi.login(openbisUser, openbisPassword)
     }
 
