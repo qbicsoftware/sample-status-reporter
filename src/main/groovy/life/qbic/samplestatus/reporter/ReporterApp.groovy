@@ -2,7 +2,6 @@ package life.qbic.samplestatus.reporter
 
 import life.qbic.samplestatus.reporter.api.Location
 import life.qbic.samplestatus.reporter.api.UpdateSearchService
-import life.qbic.samplestatus.reporter.services.LastUpdateSearch
 import life.qbic.samplestatus.reporter.services.LocationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
