@@ -55,6 +55,7 @@ class RealLimsQueryService implements LimsQueryService {
      */
     @Override
     List<Sample> getUpdatedSamples(Instant updatedSince) {
+        // TODO implement sample search @afriedrich
         return null
     }
 
