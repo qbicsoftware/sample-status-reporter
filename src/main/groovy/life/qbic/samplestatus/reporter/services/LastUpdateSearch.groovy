@@ -14,6 +14,8 @@ class LastUpdateSearch implements UpdateSearchService {
     @Value('${service.last-update.file}')
     String filePath
 
+    SimpleDateFormat isoFormat
+
     private Instant lastSearch
 
     @PostConstruct
@@ -23,15 +25,30 @@ class LastUpdateSearch implements UpdateSearchService {
 
         // Parse the first line as date with format "YYYY-mm-dd'T'HH:mm:ssZ" (ISO 8601)
         // For example "2021-12-01T12:00:00+0200"
-        SimpleDateFormat isoFormat = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ssZ')
+        this.isoFormat = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ssZ')
         Date date = isoFormat.parse(lastSearchDate)
 
         // Set lastSearch field
         lastSearch = date.toInstant()
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     Instant getLastUpdateSearchTimePoint() {
-        return null
+        return this.lastSearch
+    }
+
+    /**
+     * @inheritDocs
+     */
+    @Override
+    void saveLastSearchTimePoint(Instant lastSearchTimePoint) {
+        Date date = Date.from(lastSearchTimePoint)
+        new File(filePath).withWriter {
+            it.write(isoFormat.format(date))
+            lastSearch = lastSearchTimePoint
+        }
     }
 }
