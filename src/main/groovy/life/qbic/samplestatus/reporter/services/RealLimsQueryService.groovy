@@ -28,6 +28,20 @@ class RealLimsQueryService implements LimsQueryService {
 
     private final String sessionToken
 
+    /**
+     * <b>Main configuration constructor</b>
+     *
+     * <p>This constructor is used by Spring to create an Singleton instance of the {@link RealLimsQueryService}.</p>
+     * <p>Please note, that we need three constructor parameters, that must be configured in the applications property file.</p>
+     *
+     * <p>We have the application property <code>service.openbis.user</code> that maps to the parameter <code>openbisUser</code>,
+     * then the property <code>service.openbis.password</code> that maps to the parameter <code>openbisPassword</code>
+     * and finally the property <code>service.openbis.api-server-url</code> that maps to the parameter <code>applicationServerUrl</code>.</p>
+     *
+     * @param openbisUser the openBIS user id
+     * @param openbisPassword the openBIS user password
+     * @param applicationServerUrl the openBIS application server url
+     */
     RealLimsQueryService(@Value('${service.openbis.user}') String openbisUser,
                          @Value('${service.openbis.password}') String openbisPassword,
                          @Value('${service.openbis.api-server-url}') String applicationServerUrl) {
