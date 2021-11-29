@@ -19,7 +19,7 @@ interface LimsQueryService {
      * time instant</p>
      *
      * <p> For example if you want to search for the updated samples since the last hour, you can just
-     * define the instant method parameter as this:</p>
+     * define the instant method parameter like this:</p>
      *
      * <pre>
      *  Instant oneHourEarlier = Instant.now().minus(1, ChronoUnit.HOURS);
