@@ -2,7 +2,12 @@ package life.qbic.samplestatus.reporter.services
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.systemsx.cisd.common.spring.HttpInvokerUtils
-import life.qbic.samplestatus.reporter.Sample
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.search.SearchResult
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
+
+//import life.qbic.samplestatus.reporter.Sample
 import life.qbic.samplestatus.reporter.api.LimsQueryService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -74,8 +79,19 @@ class RealLimsQueryService implements LimsQueryService {
      */
     @Override
     List<Sample> getUpdatedSamples(Instant updatedSince) {
-        // TODO implement sample search @afriedrich
-        return null
+        SampleSearchCriteria criteria = new SampleSearchCriteria()
+        // we make sure that the barcode is set, otherwise the sample is of no interest to us
+        criteria.withProperty("QBIC_BARCODE").thatContains("Q")
+        // only fetch latest samples
+        criteria.withModificationDate().thatIsLaterThanOrEqualTo(Date.from(updatedSince))
+ 
+        // we need to fetch properties, as the sample status (and barcode) is contained therein
+        SampleFetchOptions fetchOptions = new SampleFetchOptions()
+        fetchOptions.withProperties()
+ 
+        SearchResult<Sample> result = v3.searchSamples(sessionToken, criteria, fetchOptions)
+ 
+        return result.getObjects()
     }
 
     /**
