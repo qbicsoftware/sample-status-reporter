@@ -1,6 +1,6 @@
 package life.qbic.samplestatus.reporter.api
 
-import life.qbic.samplestatus.reporter.Sample
+import life.qbic.samplestatus.reporter.SampleUpdate
 
 import java.time.Instant
 
@@ -33,5 +33,5 @@ interface LimsQueryService {
      * @return a list of updated samples
      * @since 0.1.0
      */
-    List<Sample> getUpdatedSamples(Instant updatedSince)
+    List<SampleUpdate> getUpdatedSamples(Instant updatedSince)
 }
