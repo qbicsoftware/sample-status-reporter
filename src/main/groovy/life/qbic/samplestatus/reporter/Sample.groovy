@@ -8,6 +8,7 @@ package life.qbic.samplestatus.reporter
  * @since <version tag>
  */
 class Sample {
+
     String sampleCode
 
 }

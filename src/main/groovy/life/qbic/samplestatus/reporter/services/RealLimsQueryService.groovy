@@ -1,24 +1,20 @@
 package life.qbic.samplestatus.reporter.services
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import ch.systemsx.cisd.common.spring.HttpInvokerUtils
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.search.SearchResult
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
-
-import life.qbic.samplestatus.reporter.api.LimsQueryService
+import ch.systemsx.cisd.common.spring.HttpInvokerUtils
 import life.qbic.samplestatus.reporter.SampleUpdate
+import life.qbic.samplestatus.reporter.api.LimsQueryService
+import life.qbic.samplestatus.reporter.services.utils.SampleStatusMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 import java.time.Instant
-import java.util.Date
-import java.util.HashMap
-import java.util.List
-import java.util.Map
 
 /**
  * <b>Class RealLimsQueryService</b>
@@ -77,7 +73,6 @@ class RealLimsQueryService implements LimsQueryService {
             throw new AuthenticationException("Authentication against LIMS service failed.")
         }
     }
-
     /**
      * {@InheritDocs}
      */
@@ -88,47 +83,28 @@ class RealLimsQueryService implements LimsQueryService {
         criteria.withProperty("QBIC_BARCODE").thatContains("Q")
         // only fetch latest samples
         criteria.withModificationDate().thatIsLaterThanOrEqualTo(Date.from(updatedSince))
- 
+
         // we need to fetch properties, as the sample status (and barcode) is contained therein
         SampleFetchOptions fetchOptions = new SampleFetchOptions()
         fetchOptions.withProperties()
 
-        SearchResult<Sample> result = v3.searchSamples(sessionToken, criteria, fetchOptions)
-        List<SampleUpdate> sampleUpdates = result.getObjects().stream().map( sample -> createSampleUpdate(sample) ).collect( Collectors.toList() )
+        SearchResult<Sample> result = openBisApplicationServerApi.searchSamples(sessionToken, criteria, fetchOptions)
+        List<SampleUpdate> sampleUpdates = result.getObjects().stream().map(sample -> createSampleUpdate(sample)).collect()
 
         return sampleUpdates
     }
 
-    public static SampleUpdate createSampleUpdate(Sample limsSample) {
+    private static SampleUpdate createSampleUpdate(Sample limsSample) {
 
-        Map<String,String> properties = limsSample.getProperties()
+        Map<String, String> properties = limsSample.getProperties()
         String sampleBarcode = properties.get("QBIC_BARCODE")
 
-        life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleBarcode)
+        life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleCode: sampleBarcode)
 
         Date modificationDate = sample.getModificationDate()
-        String updatedStatus = mapSampleStatus(properties.get("SAMPLE_STATUS"))
+        String updatedStatus = new SampleStatusMapper().apply(properties.get("SAMPLE_STATUS"))
 
-        return new SampleUpdate(sample = sample, updatedStatus = updatedStatus, modificationDate = modificationDate)
-    }
-
-    /**
-     * This method does not make decisions based on which status should be updated. This decision might be made
-     * elsewhere, as the default status 'METADATA_REGISTERED´ should probably not overwrite later, lab-independent statuses.
-     */
-    private String mapSampleStatus(String statusString) {
-        switch (statusString) {
-            case "SAMPLE_RECEIVED":
-                return statusString
-            case "QC_PASSED":
-                return "SAMPLE_QC_PASS"
-            case "QC_FAILED":
-                return "SAMPLE_QC_FAIL"
-            case "LIBRARY_PREP_FINISHED":
-                return statusString
-            default:
-                return "METADATA_REGISTERED"
-            }
+        return new SampleUpdate(sample: sample, updatedStatus: updatedStatus, modificationDate: modificationDate)
     }
 
     /**
