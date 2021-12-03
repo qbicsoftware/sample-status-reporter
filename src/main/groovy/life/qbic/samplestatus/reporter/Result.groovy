@@ -46,17 +46,17 @@ class Result<V, E extends Exception> {
         return error
     }
 
-    Boolean hasError() {
-        return exception
+    Boolean isError() {
+        return exception as boolean
     }
 
     Boolean isOk() {
-        return value
+        return value as boolean
     }
 
     def <U,E extends Exception> Result<U, E> map(Function<V, U> function) {
         Objects.requireNonNull(function)
-        if (hasError()) {
+        if (isError()) {
             return new Result<U, E>(exception as E)
         } else {
             try {
