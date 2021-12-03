@@ -1,5 +1,7 @@
 package life.qbic.samplestatus.reporter
 
+import java.util.function.Function
+
 /**
  * <class short description - 1 Line!>
  *
@@ -7,37 +9,37 @@ package life.qbic.samplestatus.reporter
  *
  * @since <version tag>
  */
-class Result<S> {
+class Result<V, E extends Exception> {
 
-    private final S data
-    private final Exception exception
+    private final V value
+    private final E exception
 
-    static <S> Result<S> of(S value) {
-        return new Result(value)
+    static <V,E extends Exception> Result<V, E> of(V value) {
+        return new Result<>(value)
     }
 
-    static <S> Result<S> of(Exception e) {
-        return new Result(e)
+    static <V,E extends Exception> Result<V, E> of(E e) {
+        return new Result<>(e)
     }
 
-    private Result(S data) {
-        this.data = data
+    private Result(V value) {
+        this.value = value
         this.exception = null
     }
 
-    private Result(Exception exception) {
-        this.data = null
+    private Result(E exception) {
+        this.value = null
         this.exception = exception
     }
 
-    S getValue() throws NoSuchElementException {
-        if (!data) {
+    V getValue() throws NoSuchElementException {
+        if (!value) {
             throw new NoSuchElementException("Result with error has no value.")
         }
-        return data
+        return value
     }
 
-    Exception getError() throws NoSuchElementException {
+    E getError() throws NoSuchElementException {
         if (!error) {
             throw new NoSuchElementException("Result with value has no error.")
         }
@@ -49,6 +51,20 @@ class Result<S> {
     }
 
     Boolean isOk() {
-        return data
+        return value
+    }
+
+    def <U,E extends Exception> Result<U, E> map(Function<V, U> function) {
+        Objects.requireNonNull(function)
+        if (hasError()) {
+            return new Result<U, E>(exception as E)
+        } else {
+            try {
+                Result<U, E> result = new Result<>(function.apply(value))
+                return result
+            } catch (Exception e) {
+                return new Result<U, E>(e as E)
+            }
+        }
     }
 }
