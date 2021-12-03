@@ -1,7 +1,5 @@
 package life.qbic.samplestatus.reporter
 
-import java.util.function.Supplier
-
 /**
  * <class short description - 1 Line!>
  *
@@ -9,51 +7,48 @@ import java.util.function.Supplier
  *
  * @since <version tag>
  */
-class Result<S> implements Supplier<S>{
+class Result<S> {
 
     private final S data
     private final Exception exception
 
-    static Result<S> of(S value, Exception e) {
-        return new Result<S>(value, e)
+    static <S> Result<S> of(S value) {
+        return new Result(value)
     }
 
-    private Result(S data, Exception exception) {
+    static <S> Result<S> of(Exception e) {
+        return new Result(e)
+    }
+
+    private Result(S data) {
         this.data = data
+        this.exception = null
+    }
+
+    private Result(Exception exception) {
+        this.data = null
         this.exception = exception
     }
 
-    @Override
-    S get() {
-        if(!data) {
+    S getValue() throws NoSuchElementException {
+        if (!data) {
             throw new NoSuchElementException("Result with error has no value.")
         }
         return data
     }
 
-    Exception getError() {
-        if(!error) {
+    Exception getError() throws NoSuchElementException {
+        if (!error) {
             throw new NoSuchElementException("Result with value has no error.")
         }
         return error
     }
 
-    Boolean isError() {
+    Boolean hasError() {
         return exception
     }
 
     Boolean isOk() {
-        return data
-    }
-
-    S getOrElse(Supplier<S> otherSupplier) {
-        return { isError() ? otherSupplier : data }.run()
-    }
-
-    public <X extends Throwable> S getOrThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (!data) {
-            throw exceptionSupplier.get()
-        }
         return data
     }
 }
