@@ -14,7 +14,11 @@ class Result<S> implements Supplier<S>{
     private final S data
     private final Exception exception
 
-    Result(S data, Exception exception) {
+    static Result<S> of(S value, Exception e) {
+        return new Result<S>(value, e)
+    }
+
+    private Result(S data, Exception exception) {
         this.data = data
         this.exception = exception
     }
