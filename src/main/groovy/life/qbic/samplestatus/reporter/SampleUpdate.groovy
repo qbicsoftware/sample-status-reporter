@@ -1,17 +1,14 @@
 package life.qbic.samplestatus.reporter
 
-import java.util.Date
+import java.time.Instant
 
 /**
- * <b><short description></b>
+ * <b>Value Class SampleUpdate</b>
  *
- * <p><detailed description></p>
- *
- * @since <version tag>
+ * @since 0.1.0
  */
 class SampleUpdate {
-
     Sample sample
     String updatedStatus
-    Date modificationDate
+    Instant modificationDate
 }

@@ -104,7 +104,7 @@ class RealLimsQueryService implements LimsQueryService {
         Date modificationDate = sample.getModificationDate()
         String updatedStatus = new SampleStatusMapper().apply(properties.get("SAMPLE_STATUS"))
 
-        return new SampleUpdate(sample: sample, updatedStatus: updatedStatus, modificationDate: modificationDate)
+        return new SampleUpdate(sample: sample, updatedStatus: updatedStatus, modificationDate: modificationDate.toInstant())
     }
 
     /**
