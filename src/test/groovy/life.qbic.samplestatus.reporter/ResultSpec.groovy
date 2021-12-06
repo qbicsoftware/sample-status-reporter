@@ -47,7 +47,7 @@ class ResultSpec extends Specification {
         then:
         noExceptionThrown()
         e instanceof RuntimeException
-        stringResult.hasError()
+        stringResult.isError()
         !stringResult.isOk()
     }
 
@@ -65,5 +65,56 @@ class ResultSpec extends Specification {
         result.isOk()
         result.getValue() instanceof Integer
         result.getValue() == 8
+    }
+
+    def "Test for result idiom with value"() {
+        given:
+        String actualValue = "A real value"
+        Result<String, Exception> stringResult = Result.of(actualValue)
+
+        and:
+        ExecutionDummy<String> executionDummy = Mock(ExecutionDummy.class)
+
+        when:
+        switch (stringResult) {
+            case { it.isOk() }:
+                executionDummy.execute(stringResult.getValue())
+                break
+            case { it.isError() }:
+                throw stringResult.getError()
+                break
+        }
+
+        then:
+        1 * executionDummy.execute(actualValue)
+    }
+
+    def "Test for result idiom with exception"() {
+        given:
+        String exceptionMessage = "Iuh, that went south!"
+        Result<String, Exception> stringResult = Result.of(new RuntimeException(exceptionMessage))
+
+        and:
+        ExecutionDummy<String> executionDummy = Mock(ExecutionDummy.class)
+
+        when:
+        switch (stringResult) {
+            case { it.isOk() }:
+                executionDummy.execute(stringResult.getValue())
+                break
+            case { it.isError() }:
+                throw stringResult.getError()
+                break
+        }
+
+        then:
+        thrown(RuntimeException.class)
+        stringResult.getError().getMessage() == exceptionMessage
+    }
+
+    class ExecutionDummy<T> {
+
+        void execute(T t){}
+
     }
 }
