@@ -1,8 +1,11 @@
 package life.qbic.samplestatus.reporter.services
 
+
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import life.qbic.samplestatus.reporter.api.Address
 import life.qbic.samplestatus.reporter.api.Location
+import life.qbic.samplestatus.reporter.api.ResponsiblePerson
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
@@ -35,22 +38,32 @@ class QbicSampleTrackingService implements SampleTrackingService {
     @Value('${service.sampletracking.auth.password}')
     private String servicePassword
 
-    private String fullEndpointPath
+    private String locationEndpointPath
 
     @PostConstruct
     void initService() {
-        fullEndpointPath = sampleTrackingBaseUrl + locationEndpoint
+        locationEndpointPath = sampleTrackingBaseUrl + locationEndpoint
     }
 
     @Override
     Optional<Location> getLocationForUser(String userId) {
-        URI requestURI = createURI(userId)
+        URI requestURI = createUserLocationURI(userId)
         HttpResponse response = requestLocation(requestURI)
-        return parseLocationOfJson(response.body())
+        return DtoMapper.parseLocationOfJson(response.body())
     }
 
-    private URI createURI(String userId) {
-        return URI.create("${this.fullEndpointPath}/${userId}")
+    @Override
+    void updateSampleLocation(String sampleCode, Location location, ResponsiblePerson responsiblePerson) {
+        String locationJson = DtoMapper.createJsonFromLocation(location, responsiblePerson)
+        URI requestUri = createSampleUpdateURI(sampleCode, locationJson)
+    }
+
+    private URI createUserLocationURI(String userId) {
+        return URI.create("${this.locationEndpointPath}/${userId}")
+    }
+
+    private URI createSampleUpdateURI(String sampleCode, String locationJson) {
+        return URI.create("${sampleTrackingBaseUrl}/${sampleCode}/currentLocation/${locationJson}")
     }
 
     private HttpResponse requestLocation(URI requestURI) {
@@ -65,15 +78,6 @@ class QbicSampleTrackingService implements SampleTrackingService {
         return client.send(request, HttpResponse.BodyHandlers.ofString())
     }
 
-    private static Optional<Location> parseLocationOfJson(String putativeLocationJson) {
-        List<Map> locationMaps = parseJsonToList(putativeLocationJson )
-        return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst()
-    }
-
-    private static List<Map<?, ?>> parseJsonToList(String json) {
-        return new JsonSlurper().parseText(json) as ArrayList<Map>
-    }
-
     private static class DtoMapper {
 
         private static final LOCATION_NAME = "name"
@@ -84,6 +88,20 @@ class QbicSampleTrackingService implements SampleTrackingService {
         private static final ADDRESS_STREET = "street"
         private static final ADDRESS_ZIP = "zip_code"
         private static final ADDRESS_COUNTRY = "country"
+
+        protected static Optional<Location> parseLocationOfJson(String putativeLocationJson) {
+            List<Map> locationMaps = parseJsonToList(putativeLocationJson )
+            return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst()
+        }
+
+        protected static String createJsonFromLocation(Location location, ResponsiblePerson responsiblePerson) {
+            Map locationMap = convertLocationToMap(location, responsiblePerson)
+            return JsonOutput.toJson(locationMap)
+        }
+
+        private static List<Map<?, ?>> parseJsonToList(String json) {
+            return new JsonSlurper().parseText(json) as ArrayList<Map>
+        }
 
         private static Location convertMapToLocation(Map locationMap) {
             Location location = new Location()
@@ -101,6 +119,55 @@ class QbicSampleTrackingService implements SampleTrackingService {
             address.zipCode = addressMap.get(ADDRESS_ZIP) ?: ""
             address.country = addressMap.get(ADDRESS_COUNTRY) ?: ""
             return address
+        }
+
+        /**
+         * <pre>
+         * {
+         *     "name": "QBiC",
+         *     "responsible_person": "Tobias Koch",
+         *     "responsible_person_email": "tobias.koch@qbic.uni-tuebingen.de",
+         *     "address": {
+         *         "affiliation": "QBiC",
+         *         "street": "Auf der Morgenstelle 10",
+         *         "zip_code": 72076,
+         *         "country": "Germany"
+         *     }
+         * }
+         * </pre>
+         * @param location
+         * @return a map representing the location
+         */
+        private static Map<String, ?> convertLocationToMap(Location location, ResponsiblePerson responsiblePerson) {
+            Map locationMap = [
+                    "name": location.getLabel(),
+                    "responsible_person": responsiblePerson.getFullName(),
+                    "responsible_person_email": responsiblePerson.getEmail(),
+                    "address": convertAddressToMap(location.getAddress())
+            ]
+            return locationMap
+        }
+
+        /**
+         * <pre>
+         * {
+         *     "affiliation": "QBiC",
+         *     "street": "Auf der Morgenstelle 10",
+         *     "zip_code": 72076,
+         *     "country": "Germany"
+         * }
+         * </pre>
+         * @param address the address being converted to a map
+         * @return a map containing information about the address provided
+         */
+        private static Map<String, String> convertAddressToMap(Address address) {
+            Map addressMap = [
+                    "affiliation": address.getAffiliation(),
+                    "street": address.getStreet(),
+                    "zip_code": address.getZipCode(),
+                    "country": address.getCountry()
+            ]
+            return addressMap
         }
     }
 }
