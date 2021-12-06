@@ -137,15 +137,19 @@ class Result<V, E extends Exception> {
      */
     def <U,E extends Exception> Result<U, E> map(Function<V, U> function) {
         Objects.requireNonNull(function)
-        if (isError()) {
-            return new Result<U, E>(err as E)
-        } else {
-            try {
-                Result<U, E> result = new Result<>(function.apply(value))
-                return result
-            } catch (Exception e) {
-                return new Result<U, E>(e as E)
-            }
+        switch (this) {
+            case { it.isError() }: return new Result<U, E>(err as E); break
+            case { it.isOk() }: return apply(function, this.getValue() as V); break
+        }
+    }
+
+    private static <V,U,E extends Exception> Result<U, E> apply(Function<V ,U> function, V value) {
+        try {
+            Result<U,E> processedResult = new Result<>(function.apply(value))
+            return processedResult
+        } catch (Exception e) {
+            Result<U,E> failureResult= new Result<U, E>(e as E)
+            return failureResult
         }
     }
 }
