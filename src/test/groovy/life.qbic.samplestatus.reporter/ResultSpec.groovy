@@ -21,6 +21,7 @@ class ResultSpec extends Specification {
         then:
         noExceptionThrown()
         assert stringResult.isOk()
+        assert stringResult.isOk() == !stringResult.isError()
         assert value == "My precious!"
     }
 
@@ -46,7 +47,7 @@ class ResultSpec extends Specification {
         noExceptionThrown()
         e instanceof RuntimeException
         stringResult.isError()
-        !stringResult.isOk()
+        stringResult.isError() == !stringResult.isOk()
     }
 
     def "Mapping of a result of value A with a function that consumes A and produces B, must return a result of type B"(){
