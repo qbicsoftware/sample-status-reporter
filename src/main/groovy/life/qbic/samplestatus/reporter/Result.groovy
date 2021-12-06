@@ -1,6 +1,7 @@
 package life.qbic.samplestatus.reporter
 
 import java.util.function.Function
+import java.util.function.Consumer
 
 /**
  * <b>Class Result</b>
@@ -12,19 +13,31 @@ import java.util.function.Function
  * <code>E</code>. An object of type Result can only contain either a value or an exception, not both in the
  * same instance.</p>
  *
- * To properly deal with Result objects, a good idiom looks like this:
+ * To properly deal with Result objects, a good idiom using Java's enhanced switch statements
+ * looks like this:
  *
  * <pre>
  *
- * final Result\\<String, Exception\> result = new Result("Contains actual information")
- * // access the value
+ * final Result&lt;String, Exception&gt; result =
+ *          new Result("Contains actual information")
+ * // Using the  {@link Function} interface
+ * Function function = switch (result) {
+ *    case result.isOk(): yield Function&lt;V, ?&gt;{...}
+ *    case result.isError(): yield Function&lt;E, ?&gt;{...}
+ * }
+ * function.apply(result)
+ *
+ * // or using the {@link Consumer} interface
+ * Consumer consumer = switch (result) {
+ *   case result.isOk() : yield Consumer&lt;V&gt;{...}
+ *   case result.isError() : yield Consumer&lt;E&gt;{...}
+ * }
+ * consumer.accept(result)
+ *
+ * // or using lambda expressions
  * switch (result) {
- *    case { it.isOk() }:
- *      doSomething(it.getValue())
- *      break
- *    case { it.isError() }:
- *      doErrorHandling(it.getError())
- *      break
+ *   case result.isOk() : () -> {}
+ *   case result.isError() : () -> {}
  * }
  * </pre>
  *

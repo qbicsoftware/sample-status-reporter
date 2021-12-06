@@ -5,11 +5,9 @@ import spock.lang.Specification
 import java.util.function.Function
 
 /**
- * <class short description - 1 Line!>
+ * Tests for the {@link Result} class.
  *
- * <More detailed description - When to use, what it solves, etc.>
- *
- * @since <version tag>
+ * @since 0.1.0
  */
 class ResultSpec extends Specification {
 
@@ -77,16 +75,12 @@ class ResultSpec extends Specification {
 
         when:
         switch (stringResult) {
-            case { it.isOk() }:
-                executionDummy.execute(stringResult.getValue())
-                break
-            case { it.isError() }:
-                throw stringResult.getError()
-                break
+            case { it.isOk() }: executionDummy.apply(stringResult.getValue()); break
+            case { it.isError() }: throw stringResult.getError(); break
         }
 
         then:
-        1 * executionDummy.execute(actualValue)
+        1 * executionDummy.apply(actualValue)
     }
 
     def "Test for result idiom with exception"() {
@@ -95,16 +89,12 @@ class ResultSpec extends Specification {
         Result<String, Exception> stringResult = Result.of(new RuntimeException(exceptionMessage))
 
         and:
-        ExecutionDummy<String> executionDummy = Mock(ExecutionDummy.class)
+        ExecutionDummy<String> executionDummy = new ExecutionDummy<>()
 
         when:
         switch (stringResult) {
-            case { it.isOk() }:
-                executionDummy.execute(stringResult.getValue())
-                break
-            case { it.isError() }:
-                throw stringResult.getError()
-                break
+            case { it.isOk() }: executionDummy.apply("Worked!"); break
+            case { it.isError() }: throw new RuntimeException("Error present"); break
         }
 
         then:
@@ -112,9 +102,64 @@ class ResultSpec extends Specification {
         stringResult.getError().getMessage() == exceptionMessage
     }
 
-    class ExecutionDummy<T> {
+    def "Mapping a function to a result with value must the target result type with target value type and target value"() {
+        given:
+        // A six-char String
+        String message = "Hello!"
+        Result<String, Exception> stringResult = Result.of(message)
 
-        void execute(T t){}
+        and:
+        Function<String, Integer> lengthCalculator = (s) -> { s.length() }
 
+        when:
+        Result<Integer, Exception> lengthResult = stringResult.map(lengthCalculator)
+
+        then:
+        lengthResult.isOk()
+        lengthResult.getValue() == message.length() // 6
+    }
+
+    def "Mapping a function to a result with error must the target result type with target value type and input error"() {
+        given:
+        String message = "Failure!"
+        Result<String, Exception> stringResult = Result.of(new RuntimeException(message))
+
+        and:
+        Function<String, Integer> lengthCalculator = (s) -> { s.length() }
+
+        when:
+        Result<Integer, Exception> lengthResult = stringResult.map(lengthCalculator)
+
+        then:
+        lengthResult.isError()
+        lengthResult.getError().getMessage() == message // the initial error message
+    }
+
+    def "Given an exception in the mapped function passed to the result object, the final result object must contain this exception"() {
+        given:
+        String message = "We believe this might works..."
+        Result<String, Exception> stringResult = Result.of(message)
+
+        and:
+        Function<String, Integer> lengthCalculator = (s) -> { s.notAvailableProperty }
+
+        when:
+        Result<Integer, Exception> lengthResult = stringResult.map(lengthCalculator)
+
+        then:
+        noExceptionThrown()
+        lengthResult.isError()
+        lengthResult.getError() instanceof MissingPropertyException // the wrapped exception
+    }
+
+    /**
+     * Small helper class for mocking executions
+     * @param <T>
+     */
+    class ExecutionDummy<T> implements Function<T,String> {
+        @Override
+        String apply(T t) {
+            return "worked!"
+        }
     }
 }
