@@ -6,6 +6,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
 import ch.systemsx.cisd.common.spring.HttpInvokerUtils
+import life.qbic.samplestatus.reporter.Result
 import life.qbic.samplestatus.reporter.SampleUpdate
 import life.qbic.samplestatus.reporter.api.LimsQueryService
 import life.qbic.samplestatus.reporter.services.utils.SampleStatusMapper
@@ -77,7 +78,7 @@ class RealLimsQueryService implements LimsQueryService {
      * {@InheritDocs}
      */
     @Override
-    List<SampleUpdate> getUpdatedSamples(Instant updatedSince) {
+    List<Result<SampleUpdate, Exception>> getUpdatedSamples(Instant updatedSince) {
         SampleSearchCriteria criteria = new SampleSearchCriteria()
         // we make sure that the barcode is set, otherwise the sample is of no interest to us
         criteria.withProperty("QBIC_BARCODE").thatContains("Q")
@@ -89,12 +90,15 @@ class RealLimsQueryService implements LimsQueryService {
         fetchOptions.withProperties()
 
         SearchResult<Sample> result = openBisApplicationServerApi.searchSamples(sessionToken, criteria, fetchOptions)
-        List<SampleUpdate> sampleUpdates = result.getObjects().stream().map(sample -> createSampleUpdate(sample)).collect()
+        List<Result<SampleUpdate, Exception>> sampleUpdates =
+                result.getObjects().stream()
+                        .map(this::createSampleUpdate)
+                        .collect()
 
         return sampleUpdates
     }
 
-    private static SampleUpdate createSampleUpdate(Sample limsSample) {
+    private static Result<SampleUpdate, Exception> createSampleUpdate(Sample limsSample) {
 
         Map<String, String> properties = limsSample.getProperties()
         String sampleBarcode = properties.get("QBIC_BARCODE")
@@ -102,9 +106,12 @@ class RealLimsQueryService implements LimsQueryService {
         life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleCode: sampleBarcode)
 
         Date modificationDate = sample.getModificationDate()
-        String updatedStatus = new SampleStatusMapper().apply(properties.get("SAMPLE_STATUS"))
+        Result<String, Exception> updatedStatus = new SampleStatusMapper().apply(properties.get("SAMPLE_STATUS"))
 
-        return new SampleUpdate(sample: sample, updatedStatus: updatedStatus, modificationDate: modificationDate.toInstant())
+        switch (updatedStatus) {
+            case { it.isOk() }: return Result.of(new SampleUpdate(sample: sample, updatedStatus: updatedStatus.getValue(), modificationDate: modificationDate.toInstant())); break
+            case { it.isError() }: return Result.of(updatedStatus.getError()); break
+        }
     }
 
     /**

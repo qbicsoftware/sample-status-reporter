@@ -1,5 +1,7 @@
 package life.qbic.samplestatus.reporter.services.utils
 
+import life.qbic.samplestatus.reporter.Result
+
 import java.util.function.Function
 
 /**
@@ -9,7 +11,7 @@ import java.util.function.Function
  *
  * @since 0.1.0
  */
-class SampleStatusMapper implements Function<String, String>{
+class SampleStatusMapper implements Function<String, Result<String, Exception>>{
 
     private static final String SAMPLE_RECEIVED = "SAMPLE_RECEIVED";
     private static final String SAMPLE_QC_PASS = "SAMPLE_QC_PASS";
@@ -22,26 +24,28 @@ class SampleStatusMapper implements Function<String, String>{
      * @return the mapped String value
      */
     @Override
-    String apply(String s) {
+    Result<String, Exception> apply(String s) {
         return mapSampleStatus(s)
     }
 
-    private String mapSampleStatus(String statusString) throws MappingException {
+    private Result<String, Exception> mapSampleStatus(String statusString)  {
         if (statusString.isEmpty()) {
-            throw new MappingException("Status value is empty.")
+            return Result.of(new MappingException("Status value is empty."))
         }
+        Result<String, Exception> result
         switch (statusString) {
             case "SAMPLE_RECEIVED":
-                return SAMPLE_RECEIVED
+                result = Result.of(SAMPLE_RECEIVED); break
             case "QC_PASSED":
-                return SAMPLE_QC_PASS
+                result = Result.of(SAMPLE_QC_PASS); break
             case "QC_FAILED":
-                return SAMPLE_QC_FAIL
+                result = Result.of(SAMPLE_QC_FAIL); break
             case "LIBRARY_PREP_FINISHED":
-                return LIBRARY_PREP_FINISHED
+                result = Result.of(LIBRARY_PREP_FINISHED); break
             default:
-                throw new MappingException("Cannot map unkown satus value: $statusString.")
+                result = Result.of(new MappingException("Cannot map unkown satus value: $statusString."))
         }
+        return result
     }
 
     /**
