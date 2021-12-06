@@ -55,7 +55,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
     @Override
     void updateSampleLocation(String sampleCode, Location location, UserDetails responsiblePerson) throws SampleUpdateException {
         String locationJson = DtoMapper.createJsonFromLocation(location, responsiblePerson)
-        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode, locationJson), locationJson)
+        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
         if (response.statusCode() != 200) {
             throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.body()}")
         }
@@ -64,9 +64,9 @@ class QbicSampleTrackingService implements SampleTrackingService {
     @Override
     void updateSampleLocation(String sampleCode, Location location, String status, UserDetails responsiblePerson) throws SampleUpdateException {
         String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, responsiblePerson)
-        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode, locationJson), locationJson)
+        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
         if (response.statusCode() != 200) {
-            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.body()}")
+            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.headers()}: ${response.body()}")
         }
     }
 
@@ -86,8 +86,8 @@ class QbicSampleTrackingService implements SampleTrackingService {
         return URI.create("${this.locationEndpointPath}/${userId}")
     }
 
-    private URI createSampleUpdateURI(String sampleCode, String locationJson) {
-        return URI.create("${sampleTrackingBaseUrl}/${sampleCode}/currentLocation/${locationJson}")
+    private URI createSampleUpdateURI(String sampleCode) {
+        return URI.create("${sampleTrackingBaseUrl}/${sampleCode}/currentLocation/")
     }
 
     private HttpResponse<String> requestLocation(URI requestURI) {
@@ -118,6 +118,8 @@ class QbicSampleTrackingService implements SampleTrackingService {
         private static final ADDRESS_COUNTRY = "country"
 
         protected static Location parseLocationOfJson(String putativeLocationJson) {
+            println putativeLocationJson
+
             List<Map> locationMaps = parseJsonToList(putativeLocationJson )
             return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst().orElseThrow({new DtoParseException("No location found in json.")})
         }

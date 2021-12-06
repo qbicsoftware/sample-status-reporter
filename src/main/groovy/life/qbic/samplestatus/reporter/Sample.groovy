@@ -10,4 +10,7 @@ package life.qbic.samplestatus.reporter
 class Sample {
     String sampleCode
 
+    Sample(String sampleCode) {
+        this.sampleCode = sampleCode
+    }
 }

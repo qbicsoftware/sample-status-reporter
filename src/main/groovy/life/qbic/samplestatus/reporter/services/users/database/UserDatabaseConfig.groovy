@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
  * @since 1.0.0
  */
 @Component
-@ConfigurationProperties
+@ConfigurationProperties(prefix = "databases.users")
 class UserDatabaseConfig implements DatabaseConfig {
 
     @Value('${databases.users.user.name}')

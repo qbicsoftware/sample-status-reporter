@@ -25,14 +25,22 @@ class QbicUserService  implements UserService {
 
     @Override
     UserDetails getUserDetails(String userId) {
+        List<UserDetails> userDetails = new ArrayList<>()
         try (Connection connection = connectionProvider.connect()) {
             var statement = connection.prepareStatement("SELECT * FROM person WHERE user_id = ?")
             statement.setString(1, userId)
             ResultSet result = statement.executeQuery()
-            String firstName = result.getString("first_name")
-            String lastName = result.getString("last_name")
-            String email = result.getString("email")
-            return new UserDetails(firstName, lastName, email)
+            while (result.next()) {
+                String firstName = result.getString("first_name")
+                String lastName = result.getString("last_name")
+                String email = result.getString("email")
+                userDetails.add(new UserDetails(firstName,lastName,email))
+            }
+        }
+        if (userDetails.isEmpty()) {
+            throw new IllegalArgumentException("No user with id $userId")
+        } else {
+            return userDetails.first()
         }
     }
 }

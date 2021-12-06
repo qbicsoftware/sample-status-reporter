@@ -1,10 +1,10 @@
 package life.qbic.samplestatus.reporter.services.users.database
 
-import groovy.util.logging.Log4j2
 import org.apache.commons.dbcp2.BasicDataSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import javax.annotation.PostConstruct
 import java.sql.Connection
 import java.sql.SQLException
 
@@ -18,7 +18,7 @@ import java.sql.SQLException
  * @author: Jennifer Bödker
  *
  */
-@Log4j2
+@Singleton(lazy = true)
 @Component
 class DatabaseSession implements ConnectionProvider {
 
@@ -27,18 +27,14 @@ class DatabaseSession implements ConnectionProvider {
     private BasicDataSource dataSource
 
     @Autowired
-    private static UserDatabaseConfig userDatabaseConfig
-
-    private DatabaseSession() {
-        //This is a private Singleton constructor
-        dataSource = null
-    }
+    private UserDatabaseConfig userDatabaseConfig
 
     /**
      * Initiates the database connection
      * The instance is only created if there is no other existing
      */
-    static void init() {
+    @PostConstruct
+    void init() {
         init(
                 userDatabaseConfig.getUser(),
                 userDatabaseConfig.getPassword(),
@@ -58,28 +54,23 @@ class DatabaseSession implements ConnectionProvider {
      * @param port the port on which the database is hosted
      * @param sqlDatabase the name of the database
      */
-    static void init(String user,
-                     String password,
-                     String host,
-                     String port,
-                     String sqlDatabase) {
-        if (INSTANCE == null) {
-            INSTANCE = new DatabaseSession()
+    void init(String user,
+              String password,
+              String host,
+              String port,
+              String sqlDatabase) {
 
-            Class.forName("com.mysql.jdbc.Driver")
-            String url = "jdbc:mysql://${host}:${port}/${sqlDatabase}"
+        Class.forName("com.mysql.jdbc.Driver")
+        String url = "jdbc:mysql://${host}:${port}/${sqlDatabase}"
 
-            BasicDataSource basicDataSource = new BasicDataSource()
-            basicDataSource.setUrl(url)
-            basicDataSource.setUsername(user)
-            basicDataSource.setPassword(password)
-            basicDataSource.setMinIdle(5)
-            basicDataSource.setMaxIdle(10)
-            basicDataSource.setMaxOpenPreparedStatements(100)
-            INSTANCE.dataSource = basicDataSource
-        } else {
-            log.warn("Skipped overwrite existing connection to $host:$port with $host:$port.")
-        }
+        BasicDataSource basicDataSource = new BasicDataSource()
+        basicDataSource.setUrl(url)
+        basicDataSource.setUsername(user)
+        basicDataSource.setPassword(password)
+        basicDataSource.setMinIdle(5)
+        basicDataSource.setMaxIdle(10)
+        basicDataSource.setMaxOpenPreparedStatements(100)
+        dataSource = basicDataSource
     }
 
     /**
