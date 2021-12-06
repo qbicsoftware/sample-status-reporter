@@ -1,15 +1,15 @@
 package life.qbic.samplestatus.reporter
 
+import life.qbic.samplestatus.reporter.api.Location
+import life.qbic.samplestatus.reporter.api.UserDetails
+import life.qbic.samplestatus.reporter.services.LocationService
 import life.qbic.samplestatus.reporter.services.SampleTrackingService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 /**
- * <b><short description></b>
- *
- * <p><detailed description></p>
- *
- * @since <version tag>
+ * <b>Reports a sample update to the sample-tracking-service</b>
+ * @since 1.0.0
  */
 @Component
 class QbicSampleStatusReporter implements SampleStatusReporter {
@@ -17,11 +17,17 @@ class QbicSampleStatusReporter implements SampleStatusReporter {
     @Autowired
     private SampleTrackingService sampleTrackingService
 
+    @Autowired
+    private LocationService locationService
+
 
 
     @Override
     void reportSampleStatusUpdate(SampleUpdate sampleUpdate) {
-
-        // talk to sample tracking service
+        Location currentLocation = locationService.getCurrentLocation()
+        String sampleCode = sampleUpdate.getSample().getSampleCode()
+        String status = sampleUpdate.getUpdatedStatus()
+        UserDetails responsiblePerson = locationService.getResponsiblePerson()
+        sampleTrackingService.updateSampleLocation(sampleCode, currentLocation, status, responsiblePerson)
     }
 }

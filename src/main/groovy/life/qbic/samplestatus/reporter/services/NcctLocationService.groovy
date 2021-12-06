@@ -1,6 +1,8 @@
 package life.qbic.samplestatus.reporter.services
 
 import life.qbic.samplestatus.reporter.api.Location
+import life.qbic.samplestatus.reporter.api.UserDetails
+import life.qbic.samplestatus.reporter.services.users.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -23,8 +25,17 @@ class NcctLocationService implements LocationService {
     @Autowired
     private SampleTrackingService sampleTrackingService
 
+    @Autowired
+    private UserService userService
+
     @Override
-    Optional<Location> getCurrentLocation() {
+    Location getCurrentLocation() {
         return sampleTrackingService.getLocationForUser(userId)
+    }
+
+    @Override
+    UserDetails getResponsiblePerson() {
+        UserDetails responsiblePerson = userService.getUserDetails(userId)
+        return responsiblePerson
     }
 }

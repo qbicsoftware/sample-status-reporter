@@ -5,7 +5,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import life.qbic.samplestatus.reporter.api.Address
 import life.qbic.samplestatus.reporter.api.Location
-import life.qbic.samplestatus.reporter.api.ResponsiblePerson
+import life.qbic.samplestatus.reporter.api.UserDetails
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
@@ -46,16 +46,40 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     @Override
-    Optional<Location> getLocationForUser(String userId) {
+    Location getLocationForUser(String userId) {
         URI requestURI = createUserLocationURI(userId)
         HttpResponse response = requestLocation(requestURI)
         return DtoMapper.parseLocationOfJson(response.body())
     }
 
     @Override
-    void updateSampleLocation(String sampleCode, Location location, ResponsiblePerson responsiblePerson) {
+    void updateSampleLocation(String sampleCode, Location location, UserDetails responsiblePerson) throws SampleUpdateException {
         String locationJson = DtoMapper.createJsonFromLocation(location, responsiblePerson)
-        URI requestUri = createSampleUpdateURI(sampleCode, locationJson)
+        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode, locationJson), locationJson)
+        if (response.statusCode() != 200) {
+            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.body()}")
+        }
+    }
+
+    @Override
+    void updateSampleLocation(String sampleCode, Location location, String status, UserDetails responsiblePerson) throws SampleUpdateException {
+        String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, responsiblePerson)
+        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode, locationJson), locationJson)
+        if (response.statusCode() != 200) {
+            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.body()}")
+        }
+    }
+
+    private HttpResponse<String> requestSampleUpdate(URI requestURI, String locationJson) {
+        HttpRequest request = HttpRequest
+                .newBuilder(requestURI)
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(locationJson))
+                .build()
+        HttpClient client = HttpClient.newBuilder()
+                .authenticator(getAuthenticator())
+                .build()
+        return client.send(request, HttpResponse.BodyHandlers.ofString())
     }
 
     private URI createUserLocationURI(String userId) {
@@ -66,16 +90,20 @@ class QbicSampleTrackingService implements SampleTrackingService {
         return URI.create("${sampleTrackingBaseUrl}/${sampleCode}/currentLocation/${locationJson}")
     }
 
-    private HttpResponse requestLocation(URI requestURI) {
+    private HttpResponse<String> requestLocation(URI requestURI) {
         HttpRequest request = HttpRequest.newBuilder().GET().uri(requestURI).build()
         HttpClient client = HttpClient.newBuilder()
-                .authenticator(new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(serviceUser, servicePassword.toCharArray())
-                    }
-                }).build()
+                .authenticator(getAuthenticator()).build()
         return client.send(request, HttpResponse.BodyHandlers.ofString())
+    }
+
+    private Authenticator getAuthenticator() {
+        return new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(serviceUser, servicePassword.toCharArray())
+            }
+        }
     }
 
     private static class DtoMapper {
@@ -89,13 +117,19 @@ class QbicSampleTrackingService implements SampleTrackingService {
         private static final ADDRESS_ZIP = "zip_code"
         private static final ADDRESS_COUNTRY = "country"
 
-        protected static Optional<Location> parseLocationOfJson(String putativeLocationJson) {
+        protected static Location parseLocationOfJson(String putativeLocationJson) {
             List<Map> locationMaps = parseJsonToList(putativeLocationJson )
-            return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst()
+            return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst().orElseThrow({new DtoParseException("No location found in json.")})
         }
 
-        protected static String createJsonFromLocation(Location location, ResponsiblePerson responsiblePerson) {
+        protected static String createJsonFromLocation(Location location, UserDetails responsiblePerson) {
             Map locationMap = convertLocationToMap(location, responsiblePerson)
+            return JsonOutput.toJson(locationMap)
+        }
+
+        protected static String createJsonFromLocationWithStatus(Location location, String status, UserDetails responsiblePerson) {
+            Map locationMap = convertLocationToMap(location, responsiblePerson)
+            locationMap.put("status", status)
             return JsonOutput.toJson(locationMap)
         }
 
@@ -138,7 +172,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
          * @param location
          * @return a map representing the location
          */
-        private static Map<String, ?> convertLocationToMap(Location location, ResponsiblePerson responsiblePerson) {
+        private static Map<String, ?> convertLocationToMap(Location location, UserDetails responsiblePerson) {
             Map locationMap = [
                     "name": location.getLabel(),
                     "responsible_person": responsiblePerson.getFullName(),
