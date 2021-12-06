@@ -27,7 +27,8 @@ import java.util.function.Function
  *      break
  * }
  * </pre>
- *
+ * @param <V> the value of this result in case it is OK
+ * @param <E> the type of error this result can hold
  * @since 0.1.0
  */
 class Result<V, E extends Exception> {
