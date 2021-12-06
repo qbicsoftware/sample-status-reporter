@@ -51,10 +51,10 @@ class RealLimsQueryService implements LimsQueryService {
      * @param applicationServerUrl the openBIS application server url
      * @param serverTimeout the server connection timeout
      */
-    RealLimsQueryService(@Value('${service.openbis.user}') String openbisUser,
-                         @Value('${service.openbis.password}') String openbisPassword,
-                         @Value('${service.openbis.api-server-url}') String applicationServerUrl,
-                         @Value('${service.openbis.server-timeout}') Integer serverTimeout) {
+    RealLimsQueryService(@Value('${service.openbis.user.name}') String openbisUser,
+                         @Value('${service.openbis.user.password}') String openbisPassword,
+                         @Value('${service.openbis.server.api.url}') String applicationServerUrl,
+                         @Value('${service.openbis.server.timeout}') Integer serverTimeout) {
         this.openBisApplicationServerApi = HttpInvokerUtils.createServiceStub(
                 IApplicationServerApi.class,
                 applicationServerUrl + IApplicationServerApi.SERVICE_URL, serverTimeout)
