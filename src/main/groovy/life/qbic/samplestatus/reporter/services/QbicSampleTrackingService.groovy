@@ -3,6 +3,7 @@ package life.qbic.samplestatus.reporter.services
 import groovy.json.JsonSlurper
 import life.qbic.samplestatus.reporter.api.Address
 import life.qbic.samplestatus.reporter.api.Location
+import life.qbic.samplestatus.reporter.api.SampleTrackingService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component

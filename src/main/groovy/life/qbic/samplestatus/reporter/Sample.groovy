@@ -1,13 +1,12 @@
 package life.qbic.samplestatus.reporter
 
 /**
- * <b><short description></b>
+ * <b>Value Class Sample</b>
  *
- * <p><detailed description></p>
- *
- * @since <version tag>
+ * @since 0.1.0
  */
 class Sample {
+
     String sampleCode
 
 }
