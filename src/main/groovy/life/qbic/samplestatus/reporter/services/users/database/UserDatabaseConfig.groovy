@@ -11,16 +11,20 @@ import org.springframework.stereotype.Component
  */
 @Component
 @ConfigurationProperties(prefix = "databases.users")
-class UserDatabaseConfig implements DatabaseConfig {
+class UserDatabaseConfig  {
 
     @Value('${databases.users.user.name}')
     String user
     @Value('${databases.users.user.password}')
     String password
-    @Value('${databases.users.database.host}')
-    String host
-    @Value('${databases.users.database.port}')
-    String port
+    @Value('${databases.users.database.url}')
+    String url
     @Value('${databases.users.database.name}')
     String databaseName
+    @Value('${databases.users.database.dialect}')
+    String sqlDialect
+    @Value('${databases.users.database.driver}')
+    String driver
+
+
 }

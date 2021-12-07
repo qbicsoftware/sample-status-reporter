@@ -1,12 +1,15 @@
 package life.qbic.samplestatus.reporter.services.users.database
 
-import org.apache.commons.dbcp2.BasicDataSource
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.hibernate.cfg.Configuration
+import org.hibernate.cfg.Environment
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
-import java.sql.Connection
-import java.sql.SQLException
+import javax.annotation.PreDestroy
+
 
 /**
  * Creates a connection to the user database
@@ -22,76 +25,39 @@ import java.sql.SQLException
 @Component
 class DatabaseSession implements ConnectionProvider {
 
-    private static DatabaseSession INSTANCE
-
-    private BasicDataSource dataSource
-
     @Autowired
     private UserDatabaseConfig userDatabaseConfig
 
-    /**
-     * Initiates the database connection
-     * The instance is only created if there is no other existing
-     */
+    private SessionFactory sessionFactory
+
     @PostConstruct
     void init() {
-        init(
-                userDatabaseConfig.getUser(),
-                userDatabaseConfig.getPassword(),
-                userDatabaseConfig.getHost(),
-                userDatabaseConfig.getPort(),
-                userDatabaseConfig.getDatabaseName()
-        )
+        sessionFactory = initHibernate(userDatabaseConfig)
     }
 
+    private static SessionFactory initHibernate(UserDatabaseConfig dbConfig) {
+        var config = new Configuration()
+        var properties = new Properties()
+        config[Environment.DRIVER] = dbConfig.getDriver()
+        config[Environment.URL] = dbConfig.getUrl()
+        config[Environment.USER] = dbConfig.getUser()
+        config[Environment.PASS] = dbConfig.getPassword()
+        config[Environment.POOL_SIZE] = 1
+        config[Environment.DIALECT] = dbConfig.getSqlDialect()
+        config[Environment.CURRENT_SESSION_CONTEXT_CLASS] = "thread"
 
-    /**
-     * Initiates the database connection
-     * The instance is only created if there is no other existing
-     * @param user the user to use for the database
-     * @param password the password to use for the database connection
-     * @param host the database host
-     * @param port the port on which the database is hosted
-     * @param sqlDatabase the name of the database
-     */
-    void init(String user,
-              String password,
-              String host,
-              String port,
-              String sqlDatabase) {
-
-        Class.forName("com.mysql.jdbc.Driver")
-        String url = "jdbc:mysql://${host}:${port}/${sqlDatabase}"
-
-        BasicDataSource basicDataSource = new BasicDataSource()
-        basicDataSource.setUrl(url)
-        basicDataSource.setUsername(user)
-        basicDataSource.setPassword(password)
-        basicDataSource.setMinIdle(5)
-        basicDataSource.setMaxIdle(10)
-        basicDataSource.setMaxOpenPreparedStatements(100)
-        dataSource = basicDataSource
+        config.setProperties(properties)
+        config.buildSessionFactory()
     }
 
-    /**
-     * Creates a database connection by login into the database based on the given credentials
-     *
-     * @return Connection, otherwise null if connecting to the database fails
-     * @throws SQLException if a database access error occurs or the url is {@code null}
-     */
-    Connection connect() throws SQLException {
-        return dataSource.getConnection()
+    @Override
+    Session getCurrentSession() {
+        return sessionFactory.getCurrentSession()
     }
 
-    /**
-     * Returns the current DatabaseSession object
-     * @return
-     */
-    static DatabaseSession getInstance() {
-        if (! INSTANCE) {
-            throw new AssertionError("Call the init method first. Instance has not been initialized.")
-        } else {
-            return INSTANCE
-        }
+    @PreDestroy
+    void destroy() {
+        println "Closing session factory..."
+        sessionFactory.close()
     }
 }
