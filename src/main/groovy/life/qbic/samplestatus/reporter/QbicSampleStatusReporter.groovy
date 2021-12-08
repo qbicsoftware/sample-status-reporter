@@ -1,9 +1,9 @@
 package life.qbic.samplestatus.reporter
 
 import life.qbic.samplestatus.reporter.api.Location
-import life.qbic.samplestatus.reporter.api.UserDetails
-import life.qbic.samplestatus.reporter.services.LocationService
-import life.qbic.samplestatus.reporter.services.SampleTrackingService
+import life.qbic.samplestatus.reporter.api.LocationService
+import life.qbic.samplestatus.reporter.api.Person
+import life.qbic.samplestatus.reporter.api.SampleTrackingService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -27,7 +27,7 @@ class QbicSampleStatusReporter implements SampleStatusReporter {
         Location currentLocation = locationService.getCurrentLocation()
         String sampleCode = sampleUpdate.getSample().getSampleCode()
         String status = sampleUpdate.getUpdatedStatus()
-        UserDetails responsiblePerson = locationService.getResponsiblePerson()
+        Person responsiblePerson = locationService.getResponsiblePerson()
         sampleTrackingService.updateSampleLocation(sampleCode, currentLocation, status, responsiblePerson)
     }
 }

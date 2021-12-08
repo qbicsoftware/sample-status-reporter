@@ -5,7 +5,8 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import life.qbic.samplestatus.reporter.api.Address
 import life.qbic.samplestatus.reporter.api.Location
-import life.qbic.samplestatus.reporter.api.UserDetails
+import life.qbic.samplestatus.reporter.api.Person
+import life.qbic.samplestatus.reporter.api.SampleTrackingService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
@@ -46,14 +47,14 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     @Override
-    Location getLocationForUser(String userId) {
+    Optional<Location> getLocationForUser(String userId) {
         URI requestURI = createUserLocationURI(userId)
         HttpResponse response = requestLocation(requestURI)
-        return DtoMapper.parseLocationOfJson(response.body())
+        return Optional.of(DtoMapper.parseLocationOfJson(response.body()))
     }
 
     @Override
-    void updateSampleLocation(String sampleCode, Location location, UserDetails responsiblePerson) throws SampleUpdateException {
+    void updateSampleLocation(String sampleCode, Location location, Person responsiblePerson) throws SampleUpdateException {
         String locationJson = DtoMapper.createJsonFromLocation(location, responsiblePerson)
         HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
         if (response.statusCode() != 200) {
@@ -62,7 +63,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     @Override
-    void updateSampleLocation(String sampleCode, Location location, String status, UserDetails responsiblePerson) throws SampleUpdateException {
+    void updateSampleLocation(String sampleCode, Location location, String status, Person responsiblePerson) throws SampleUpdateException {
         String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, responsiblePerson)
         HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
         if (response.statusCode() != 200) {
@@ -124,12 +125,12 @@ class QbicSampleTrackingService implements SampleTrackingService {
             return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst().orElseThrow({new DtoParseException("No location found in json.")})
         }
 
-        protected static String createJsonFromLocation(Location location, UserDetails responsiblePerson) {
+        protected static String createJsonFromLocation(Location location, Person responsiblePerson) {
             Map locationMap = convertLocationToMap(location, responsiblePerson)
             return JsonOutput.toJson(locationMap)
         }
 
-        protected static String createJsonFromLocationWithStatus(Location location, String status, UserDetails responsiblePerson) {
+        protected static String createJsonFromLocationWithStatus(Location location, String status, Person responsiblePerson) {
             Map locationMap = convertLocationToMap(location, responsiblePerson)
             locationMap.put("status", status)
             return JsonOutput.toJson(locationMap)
@@ -174,7 +175,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
          * @param location
          * @return a map representing the location
          */
-        private static Map<String, ?> convertLocationToMap(Location location, UserDetails responsiblePerson) {
+        private static Map<String, ?> convertLocationToMap(Location location, Person responsiblePerson) {
             Map locationMap = [
                     "name": location.getLabel(),
                     "responsible_person": responsiblePerson.getFullName(),

@@ -1,6 +1,6 @@
 package life.qbic.samplestatus.reporter.services.users
 
-import life.qbic.samplestatus.reporter.api.UserDetails
+import life.qbic.samplestatus.reporter.api.Person
 
 /**
  * <b>Provides user information</b>
@@ -14,6 +14,6 @@ interface UserService {
      * @return user details for a user found.
      * @since 1.0.0
      */
-    UserDetails getUserDetails(String userId)
+    Optional<Person> getPerson(String userId)
 
 }

@@ -1,7 +1,6 @@
-package life.qbic.samplestatus.reporter.services
+package life.qbic.samplestatus.reporter.api
 
-import life.qbic.samplestatus.reporter.api.Location
-import life.qbic.samplestatus.reporter.api.UserDetails
+import life.qbic.samplestatus.reporter.services.SampleUpdateException
 
 /**
  * <b>Provides access to the sample tracking persistence layer.</b>
@@ -19,7 +18,7 @@ interface SampleTrackingService {
      * @return the location that this user is associated with
      * @since 1.0.0
      */
-    Location getLocationForUser(String userId)
+     Optional<Location> getLocationForUser(String userId)
 
     /**
      * Updates a sample to a given location with a status set in the location.
@@ -29,7 +28,7 @@ interface SampleTrackingService {
      * @throws SampleUpdateException in case the sample update was unsuccessful
      * @since 1.0.0
      */
-    void updateSampleLocation(String sampleCode, Location location, UserDetails responsiblePerson) throws SampleUpdateException
+    void updateSampleLocation(String sampleCode, Location location, Person responsiblePerson) throws SampleUpdateException
 
 
     /**
@@ -41,5 +40,5 @@ interface SampleTrackingService {
      * @throws SampleUpdateException in case the sample update was unsuccessful
      * @since 1.0.0
      */
-    void updateSampleLocation(String sampleCode, Location location, String status, UserDetails responsiblePerson) throws SampleUpdateException
+    void updateSampleLocation(String sampleCode, Location location, String status, Person responsiblePerson) throws SampleUpdateException
 }
