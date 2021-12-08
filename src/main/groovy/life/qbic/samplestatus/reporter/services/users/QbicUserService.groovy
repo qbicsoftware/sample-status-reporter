@@ -1,5 +1,6 @@
 package life.qbic.samplestatus.reporter.services.users
 
+import life.qbic.samplestatus.reporter.api.Person
 import life.qbic.samplestatus.reporter.api.UserDetails
 import life.qbic.samplestatus.reporter.services.users.database.ConnectionProvider
 import life.qbic.samplestatus.reporter.services.users.database.UserDatabaseConfig
@@ -22,6 +23,14 @@ class QbicUserService  implements UserService {
 
     @Autowired
     ConnectionProvider connectionProvider
+
+    Optional<Person> getPerson(String userId) {
+
+    }
+
+    private Result<Person, Exception> fetchPerson(String userId) {
+
+    }
 
     @Override
     UserDetails getUserDetails(String userId) {
