@@ -7,6 +7,6 @@ import org.hibernate.Session
  *
  * @since: 1.0.0
  */
-interface ConnectionProvider {
+interface SessionProvider {
     Session getCurrentSession()
 }
