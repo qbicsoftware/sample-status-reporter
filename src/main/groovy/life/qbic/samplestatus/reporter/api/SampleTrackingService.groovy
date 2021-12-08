@@ -19,9 +19,6 @@ interface SampleTrackingService {
      * @since 1.0.0
      */
      Optional<Location> getLocationForUser(String userId)
-=======
-    Optional<Location> getLocationForUser(String userId)
->>>>>>> 19690c18aee5fc51802bb21a2df0f89a9a046d6e:src/main/groovy/life/qbic/samplestatus/reporter/services/SampleTrackingService.groovy
 
     /**
      * Updates a sample to a given location with a status set in the location.
@@ -32,7 +29,6 @@ interface SampleTrackingService {
      * @since 1.0.0
      */
     void updateSampleLocation(String sampleCode, Location location, Person responsiblePerson) throws SampleUpdateException
-
 
     /**
      * Updates a sample to a given location with a status set in the location.
