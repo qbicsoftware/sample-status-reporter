@@ -33,7 +33,7 @@ class QbicUserService  implements UserService {
     }
 
     @Override
-    UserDetails getUserDetails(String userId) {
+    Optional<Person> getUserDetails(String userId) {
         List<UserDetails> userDetails = new ArrayList<>()
         try (Connection connection = connectionProvider.connect()) {
             var statement = connection.prepareStatement("SELECT * FROM person WHERE user_id = ?")
@@ -46,10 +46,6 @@ class QbicUserService  implements UserService {
                 userDetails.add(new UserDetails(firstName,lastName,email))
             }
         }
-        if (userDetails.isEmpty()) {
-            throw new IllegalArgumentException("No user with id $userId")
-        } else {
-            return userDetails.first()
-        }
+        return Optional.ofNullable(userDetails.first())
     }
 }

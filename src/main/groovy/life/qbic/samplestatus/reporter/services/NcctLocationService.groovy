@@ -38,6 +38,7 @@ class NcctLocationService implements LocationService {
 
     @Override
     Optional<Person> getResponsiblePerson() {
-       return userService.getPerson(userId)
+        Optional<Person> responsiblePerson = userService.getUserDetails(userId)
+        return responsiblePerson
     }
 }
