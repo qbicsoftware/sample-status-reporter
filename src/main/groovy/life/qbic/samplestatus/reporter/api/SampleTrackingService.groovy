@@ -18,7 +18,6 @@ interface SampleTrackingService {
      * @return the location that this user is associated with
      * @since 1.0.0
      */
-<<<<<<< HEAD:src/main/groovy/life/qbic/samplestatus/reporter/api/SampleTrackingService.groovy
      Optional<Location> getLocationForUser(String userId)
 =======
     Optional<Location> getLocationForUser(String userId)
