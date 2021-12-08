@@ -16,11 +16,11 @@ interface LocationService {
      * Provides the current location
      * @return the current location if any could be determined
      */
-    Location getCurrentLocation()
+    Optional<Location> getCurrentLocation()
 
     /**
      * Provides the responsible users for the current location
      * @return user details of the responsible users
      */
-    UserDetails getResponsiblePerson()
+    Optional<UserDetails> getResponsiblePerson()
 }

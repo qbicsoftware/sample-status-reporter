@@ -29,13 +29,13 @@ class NcctLocationService implements LocationService {
     private UserService userService
 
     @Override
-    Location getCurrentLocation() {
+    Optional<Location> getCurrentLocation() {
         return sampleTrackingService.getLocationForUser(userId)
     }
 
     @Override
-    UserDetails getResponsiblePerson() {
-        UserDetails responsiblePerson = userService.getUserDetails(userId)
+    Optional<UserDetails> getResponsiblePerson() {
+        Optional<UserDetails> responsiblePerson = userService.getUserDetails(userId)
         return responsiblePerson
     }
 }

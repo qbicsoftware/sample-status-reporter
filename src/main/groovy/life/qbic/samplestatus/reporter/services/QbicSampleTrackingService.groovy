@@ -46,10 +46,10 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     @Override
-    Location getLocationForUser(String userId) {
+    Optional<Location> getLocationForUser(String userId) {
         URI requestURI = createUserLocationURI(userId)
         HttpResponse response = requestLocation(requestURI)
-        return DtoMapper.parseLocationOfJson(response.body())
+        return Optional.of(response.body()).flatMap(DtoMapper::parseLocationOfJson)
     }
 
     @Override
@@ -117,11 +117,11 @@ class QbicSampleTrackingService implements SampleTrackingService {
         private static final ADDRESS_ZIP = "zip_code"
         private static final ADDRESS_COUNTRY = "country"
 
-        protected static Location parseLocationOfJson(String putativeLocationJson) {
+        protected static Optional<Location> parseLocationOfJson(String putativeLocationJson) {
             println putativeLocationJson
 
             List<Map> locationMaps = parseJsonToList(putativeLocationJson )
-            return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst().orElseThrow({new DtoParseException("No location found in json.")})
+            return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst()
         }
 
         protected static String createJsonFromLocation(Location location, UserDetails responsiblePerson) {

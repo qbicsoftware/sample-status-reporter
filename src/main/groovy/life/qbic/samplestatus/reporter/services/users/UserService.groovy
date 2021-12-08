@@ -14,6 +14,6 @@ interface UserService {
      * @return user details for a user found.
      * @since 1.0.0
      */
-    UserDetails getUserDetails(String userId)
+    Optional<UserDetails> getUserDetails(String userId)
 
 }
