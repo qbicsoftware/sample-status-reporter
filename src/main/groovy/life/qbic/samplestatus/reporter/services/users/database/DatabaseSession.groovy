@@ -1,5 +1,6 @@
 package life.qbic.samplestatus.reporter.services.users.database
 
+import life.qbic.samplestatus.reporter.api.Person
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.cfg.Configuration
@@ -23,7 +24,7 @@ import javax.annotation.PreDestroy
  */
 @Singleton(lazy = true)
 @Component
-class DatabaseSession implements ConnectionProvider {
+class DatabaseSession implements SessionProvider {
 
     @Autowired
     private UserDatabaseConfig userDatabaseConfig
@@ -47,7 +48,8 @@ class DatabaseSession implements ConnectionProvider {
         config[Environment.CURRENT_SESSION_CONTEXT_CLASS] = "thread"
 
         config.setProperties(properties)
-        config.buildSessionFactory()
+
+        config.addAnnotatedClass(Person.class).buildSessionFactory()
     }
 
     @Override
