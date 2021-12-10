@@ -39,13 +39,14 @@ class DatabaseSession implements SessionProvider {
     private static SessionFactory initHibernate(UserDatabaseConfig dbConfig) {
         var config = new Configuration()
         var properties = new Properties()
-        config[Environment.DRIVER] = dbConfig.getDriver()
-        config[Environment.URL] = dbConfig.getUrl()
-        config[Environment.USER] = dbConfig.getUser()
-        config[Environment.PASS] = dbConfig.getPassword()
-        config[Environment.POOL_SIZE] = 1
-        config[Environment.DIALECT] = dbConfig.getSqlDialect()
-        config[Environment.CURRENT_SESSION_CONTEXT_CLASS] = "thread"
+        println dbConfig.getDriver()
+        properties[Environment.DRIVER] = dbConfig.getDriver()
+        properties[Environment.URL] = dbConfig.getUrl()
+        properties[Environment.USER] = dbConfig.getUser()
+        properties[Environment.PASS] = dbConfig.getPassword()
+        properties[Environment.POOL_SIZE] = 1
+        properties[Environment.DIALECT] = dbConfig.getSqlDialect()
+        properties[Environment.CURRENT_SESSION_CONTEXT_CLASS] = "thread"
 
         config.setProperties(properties)
 
