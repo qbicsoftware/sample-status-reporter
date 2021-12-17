@@ -3,7 +3,8 @@ package life.qbic.samplestatus.reporter
 import life.qbic.samplestatus.reporter.api.Location
 import life.qbic.samplestatus.reporter.api.LocationService
 import life.qbic.samplestatus.reporter.api.UpdateSearchService
-
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
@@ -25,18 +26,30 @@ class ReporterApp implements CommandLineRunner {
     @Autowired
     ApplicationContext applicationContext
 
+    static Logger log
+
     static void main(String[] args) {
+        // Init logger
+        log = LogManager.getLogger(ReporterApp.class)
+        // Run app
         SpringApplication.run(ReporterApp.class, args)
     }
 
     @Override
     void run(String... args) throws Exception {
+        log.info("Querying for new sample updates...")
+        SampleUpdate update = new SampleUpdate()
+        update.setSample(new Sample("QSTTS002A3"))
+        update.setUpdatedStatus("SAMPLE_QC_FAIL")
+        SampleStatusReporter statusReporter = applicationContext.getBean("qbicSampleStatusReporter", SampleStatusReporter.class)
+        println statusReporter
+        statusReporter.reportSampleStatusUpdate(update)
         LocationService locationService = applicationContext.getBean("ncctLocationService", LocationService.class)
-        Location location = locationService.getCurrentLocation()
-                .orElseThrow({ new ReporterAppException("No current location found!") })
+        Location location = locationService.getCurrentLocation().orElseThrow({ new ReporterAppException("No current location found!") })
 
         UpdateSearchService updateSearchService = applicationContext.getBean("lastUpdateSearch", UpdateSearchService.class)
         updateSearchService.saveLastSearchTimePoint(Instant.now())
+
     }
 
     class ReporterAppException extends RuntimeException {

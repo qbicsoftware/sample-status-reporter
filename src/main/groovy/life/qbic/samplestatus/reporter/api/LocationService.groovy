@@ -18,4 +18,6 @@ interface LocationService {
      * @since 0.1.0
      */
     Optional<Location> getCurrentLocation() throws ServiceException
+
+    Optional<Person> getResponsiblePerson() throws ServiceException
 }
