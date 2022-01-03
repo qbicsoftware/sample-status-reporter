@@ -27,3 +27,7 @@ hs_err_pid*
 
 # misc
 *.DS_STORE
+
+# IntelliJ
+
+.idea
