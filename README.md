@@ -13,7 +13,7 @@ Overview:
 
 # Requirements
 
-You need to have version 17 of a **Java JRE** or **JDK** installed (e.g. **Zulu**).
+To run this app, you need to have version 17 of a **Java JRE** or **JDK** installed (e.g. **Zulu**).
 
 ## Run the app
 
