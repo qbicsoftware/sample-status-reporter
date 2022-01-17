@@ -23,7 +23,6 @@ Checkout the latest code from `main` and run the Maven goal `spring-boot:run`:
 mvn spring-boot:run
 ```
 
-To run this app 
 
 ## App structure
 
