@@ -103,9 +103,10 @@ class RealLimsQueryService implements LimsQueryService {
         Map<String, String> properties = limsSample.getProperties()
         String sampleBarcode = properties.get("QBIC_BARCODE")
 
-        life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleCode: sampleBarcode)
 
-        Date modificationDate = sample.getModificationDate()
+        life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleBarcode)
+
+        Date modificationDate = limsSample.getModificationDate()
         Result<String, Exception> updatedStatus = new SampleStatusMapper().apply(properties.get("SAMPLE_STATUS"))
 
         switch (updatedStatus) {
