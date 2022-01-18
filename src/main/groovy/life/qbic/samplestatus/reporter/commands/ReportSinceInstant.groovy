@@ -2,6 +2,7 @@ package life.qbic.samplestatus.reporter.commands
 
 import life.qbic.samplestatus.reporter.Result
 import life.qbic.samplestatus.reporter.SampleStatusReporter
+import life.qbic.samplestatus.reporter.SampleUpdate
 import life.qbic.samplestatus.reporter.api.LimsQueryService
 import life.qbic.samplestatus.reporter.api.Location
 import org.slf4j.Logger
@@ -15,7 +16,7 @@ import java.time.Instant
  *
  * @since 1.0.0
  */
-@CommandLine.Command(name = "ASCIIArt", version = "ASCIIArt 1.0", mixinStandardHelpOptions = true)
+@CommandLine.Command(name = "SampleStatusReporter", version = "1.0.0", mixinStandardHelpOptions = true)
 class ReportSinceInstant implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(ReportSinceInstant.class)
@@ -46,10 +47,15 @@ class ReportSinceInstant implements Runnable {
    */
   @Override
   void run() {
-    List updatedSamples = limsQueryService.getUpdatedSamples(getTimePoint())
+    log.info("Gathering updated samples...")
+    List<Result<SampleUpdate, Exception>> updatedSamples = limsQueryService.getUpdatedSamples(getTimePoint())
+    log.info("Found ${updatedSamples.size()} updated samples.")
+    log.info("Processing updates...")
     updatedSamples.stream()
             .filter(Result::isOk)
             .map(Result::getValue)
+            .peek(it -> log.info("updating $it"))
             .forEach(statusReporter::reportSampleStatusUpdate)
+    log.info("Finished processing.")
   }
 }
