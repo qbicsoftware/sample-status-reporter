@@ -4,7 +4,6 @@ import life.qbic.samplestatus.reporter.Result
 import life.qbic.samplestatus.reporter.SampleStatusReporter
 import life.qbic.samplestatus.reporter.SampleUpdate
 import life.qbic.samplestatus.reporter.api.LimsQueryService
-import life.qbic.samplestatus.reporter.api.Location
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
@@ -24,12 +23,10 @@ class ReportSinceInstant implements Runnable {
   @CommandLine.Option(names = ["-t", "--time-point"], description = "Point in time from where to search for updates")
   Instant timePoint = Instant.now()
 
-  private final Location currentLocation
   private final LimsQueryService limsQueryService
   private final SampleStatusReporter statusReporter
 
-  ReportSinceInstant(Location currentLocation, LimsQueryService limsQueryService, SampleStatusReporter statusReporter) {
-    this.currentLocation = currentLocation
+  ReportSinceInstant(LimsQueryService limsQueryService, SampleStatusReporter statusReporter) {
     this.limsQueryService = limsQueryService
     this.statusReporter = statusReporter
   }
