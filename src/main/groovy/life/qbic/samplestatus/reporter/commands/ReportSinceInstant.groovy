@@ -50,11 +50,10 @@ class ReportSinceInstant implements Runnable {
     log.info("Gathering updated samples...")
     List<Result<SampleUpdate, Exception>> updatedSamples = limsQueryService.getUpdatedSamples(getTimePoint())
     log.info("Found ${updatedSamples.size()} updated samples.")
-    log.info("Processing updates...")
     updatedSamples.stream()
             .filter(Result::isOk)
             .map(Result::getValue)
-            .peek(it -> log.info("\tupdating $it"))
+            .peek(it -> log.info("\tUpdating $it"))
             .forEach(statusReporter::reportSampleStatusUpdate)
     log.info("Finished processing.")
   }

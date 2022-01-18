@@ -11,4 +11,13 @@ class SampleUpdate {
     Sample sample
     String updatedStatus
     Instant modificationDate
+
+    @Override
+    String toString() {
+        return "SampleUpdate{" +
+                "sample=" + sample +
+                ", updatedStatus='" + updatedStatus + '\'' +
+                ", modificationDate=" + modificationDate +
+                '}'
+    }
 }

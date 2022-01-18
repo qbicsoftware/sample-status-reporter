@@ -53,16 +53,12 @@ class ReporterApp implements CommandLineRunner {
         }
 
         if (exitCode != 0) {
-            exit(exitCode)
+            System.exit(exitCode)
         }
         updateSearchService.saveLastSearchTimePoint(reportSinceInstant.getTimePoint())
-        exit(0)
+        System.exit(0)
     }
 
-    private static void exit(int code) {
-        log.info("exiting with code $code")
-        System.exit(code)
-    }
 
     class ReporterAppException extends RuntimeException {
         ReporterAppException() {
