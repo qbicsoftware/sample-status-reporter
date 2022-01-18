@@ -1,6 +1,6 @@
 package life.qbic.samplestatus.reporter.commands
 
-
+import life.qbic.samplestatus.reporter.Result
 import life.qbic.samplestatus.reporter.SampleStatusReporter
 import life.qbic.samplestatus.reporter.api.LimsQueryService
 import life.qbic.samplestatus.reporter.api.Location
@@ -46,9 +46,10 @@ class ReportSinceInstant implements Runnable {
    */
   @Override
   void run() {
-    log.info("I am running")
-//    // get updated samples
-//    // and then
-//    // update them in the sink
+    List updatedSamples = limsQueryService.getUpdatedSamples(getTimePoint())
+    updatedSamples.stream()
+            .filter(Result::isOk)
+            .map(Result::getValue)
+            .forEach(statusReporter::reportSampleStatusUpdate)
   }
 }
