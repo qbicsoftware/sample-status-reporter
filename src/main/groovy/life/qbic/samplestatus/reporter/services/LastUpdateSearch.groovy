@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
-import java.text.SimpleDateFormat
 import java.time.Instant
 
 @Component
@@ -21,9 +20,14 @@ class LastUpdateSearch implements UpdateSearchService {
         // Read the file content
         String lastSearchDate = new File(filePath).getText('UTF-8').trim()
 
-        // Parse the first line as date with format "YYYY-mm-dd'T'HH:mm:ss.SSSZ" (ISO 8601)
-        // For example "2021-12-01T12:00:00.000Z"
-        lastSearch = Instant.parse(lastSearchDate)
+        if (lastSearchDate) {
+            // Parse the first line as date with format "YYYY-mm-dd'T'HH:mm:ss.SSSZ" (ISO 8601)
+            // For example "2021-12-01T12:00:00.000Z"
+            lastSearch = Instant.parse(lastSearchDate)
+        } else {
+            // No previous run exists, writes current execution time in there.
+            lastSearch = Instant.now()
+        }
     }
 
     /**
