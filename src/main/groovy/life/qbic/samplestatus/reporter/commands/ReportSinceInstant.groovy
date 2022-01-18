@@ -54,7 +54,7 @@ class ReportSinceInstant implements Runnable {
     updatedSamples.stream()
             .filter(Result::isOk)
             .map(Result::getValue)
-            .peek(it -> log.info("updating $it"))
+            .peek(it -> log.info("\tupdating $it"))
             .forEach(statusReporter::reportSampleStatusUpdate)
     log.info("Finished processing.")
   }
