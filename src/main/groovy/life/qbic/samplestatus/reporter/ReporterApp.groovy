@@ -1,17 +1,18 @@
 package life.qbic.samplestatus.reporter
 
+import life.qbic.samplestatus.reporter.api.LimsQueryService
 import life.qbic.samplestatus.reporter.api.Location
 import life.qbic.samplestatus.reporter.api.LocationService
 import life.qbic.samplestatus.reporter.api.UpdateSearchService
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import life.qbic.samplestatus.reporter.commands.ReportSinceInstant
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ApplicationContext
-
-import java.time.Instant
+import picocli.CommandLine
 
 /**
  * <b>Main application class</b>
@@ -23,33 +24,44 @@ import java.time.Instant
 @SpringBootApplication
 class ReporterApp implements CommandLineRunner {
 
+    private static final Logger log = LoggerFactory.getLogger(ReporterApp.class)
+
     @Autowired
     ApplicationContext applicationContext
 
-    static Logger log
-
     static void main(String[] args) {
-        // Init logger
-        log = LogManager.getLogger(ReporterApp.class)
-        // Run app
         SpringApplication.run(ReporterApp.class, args)
     }
 
     @Override
     void run(String... args) throws Exception {
-        log.info("Querying for new sample updates...")
-        SampleUpdate update = new SampleUpdate()
-        update.setSample(new Sample("QSTTS002A3"))
-        update.setUpdatedStatus("SAMPLE_QC_FAIL")
-        SampleStatusReporter statusReporter = applicationContext.getBean("qbicSampleStatusReporter", SampleStatusReporter.class)
-        println statusReporter
-        statusReporter.reportSampleStatusUpdate(update)
-        LocationService locationService = applicationContext.getBean("ncctLocationService", LocationService.class)
-        Location location = locationService.getCurrentLocation().orElseThrow({ new ReporterAppException("No current location found!") })
-
         UpdateSearchService updateSearchService = applicationContext.getBean("lastUpdateSearch", UpdateSearchService.class)
-        updateSearchService.saveLastSearchTimePoint(Instant.now())
+        LocationService locationService = applicationContext.getBean("ncctLocationService", LocationService.class)
+        Location location = locationService.getCurrentLocation()
+                .orElseThrow({ new ReporterAppException("No current location found!") })
+        LimsQueryService limsQueryService = applicationContext.getBean("realLimsQueryService")
+        SampleStatusReporter statusReporter = applicationContext.getBean("qbicSampleStatusReporter")
 
+        def reportSinceInstant = new ReportSinceInstant(location, limsQueryService, statusReporter)
+
+        int exitCode
+        try {
+            exitCode = new CommandLine(reportSinceInstant).execute(args)
+        } catch (Exception exception) {
+            log.error(exception.getMessage(), exception)
+            exitCode = 1
+        }
+
+        if (exitCode != 0) {
+            exit(exitCode)
+        }
+        updateSearchService.saveLastSearchTimePoint(reportSinceInstant.getTimePoint())
+        exit(0)
+    }
+
+    private static void exit(int code) {
+        log.info("exiting with code $code")
+        System.exit(code)
     }
 
     class ReporterAppException extends RuntimeException {

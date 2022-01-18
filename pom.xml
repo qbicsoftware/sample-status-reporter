@@ -97,6 +97,14 @@
       <version>19.06.5</version>
     </dependency>
 
+    <!-- Command-Line Argument parsing https://mvnrepository.com/artifact/info.picocli/picocli -->
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>4.6.2</version>
+    </dependency>
+
+
     <!-- We need that for the openBIS api  -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
