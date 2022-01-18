@@ -1,8 +1,6 @@
 package life.qbic.samplestatus.reporter
 
 import life.qbic.samplestatus.reporter.api.LimsQueryService
-import life.qbic.samplestatus.reporter.api.Location
-import life.qbic.samplestatus.reporter.api.LocationService
 import life.qbic.samplestatus.reporter.api.UpdateSearchService
 import life.qbic.samplestatus.reporter.commands.ReportSinceInstant
 import org.slf4j.Logger
@@ -36,13 +34,10 @@ class ReporterApp implements CommandLineRunner {
     @Override
     void run(String... args) throws Exception {
         UpdateSearchService updateSearchService = applicationContext.getBean("lastUpdateSearch", UpdateSearchService.class)
-        LocationService locationService = applicationContext.getBean("ncctLocationService", LocationService.class)
-        Location location = locationService.getCurrentLocation()
-                .orElseThrow({ new ReporterAppException("No current location found!") })
         LimsQueryService limsQueryService = applicationContext.getBean("realLimsQueryService")
         SampleStatusReporter statusReporter = applicationContext.getBean("qbicSampleStatusReporter")
 
-        def reportSinceInstant = new ReportSinceInstant(location, limsQueryService, statusReporter)
+        def reportSinceInstant = new ReportSinceInstant(limsQueryService, statusReporter)
 
         int exitCode
         try {
@@ -57,16 +52,5 @@ class ReporterApp implements CommandLineRunner {
         }
         updateSearchService.saveLastSearchTimePoint(reportSinceInstant.getTimePoint())
         System.exit(0)
-    }
-
-
-    class ReporterAppException extends RuntimeException {
-        ReporterAppException() {
-            super()
-        }
-
-        ReporterAppException(String message) {
-            super(message)
-        }
     }
 }
