@@ -20,7 +20,7 @@ class ReportSinceInstant implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(ReportSinceInstant.class)
 
-  @CommandLine.Option(names = ["-t", "--time-point"], description = "Point in time from where to search for updates")
+  @CommandLine.Option(names = ["-t", "--time-point"], description = "Point in time from where to search for updates e.g. 2022-01-01T00:00:00Z")
   Instant timePoint = Instant.now()
 
   private final LimsQueryService limsQueryService
@@ -44,7 +44,7 @@ class ReportSinceInstant implements Runnable {
    */
   @Override
   void run() {
-    log.info("Gathering updated samples...")
+    log.info("Gathering updated samples since $timePoint ...")
     List<Result<SampleUpdate, Exception>> updatedSamples = limsQueryService.getUpdatedSamples(getTimePoint())
     log.info("Found ${updatedSamples.size()} updated samples.")
     updatedSamples.stream()
