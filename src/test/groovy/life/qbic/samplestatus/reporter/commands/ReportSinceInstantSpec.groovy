@@ -24,7 +24,7 @@ class ReportSinceInstantSpec extends Specification {
     updateSearchService.getLastUpdateSearchTimePoint() >> Optional.empty()
 
     underTest = new ReportSinceInstant(limsQueryService, statusReporter, updateSearchService)
-    underTest.call()
+    underTest.run()
     then: "no sample updates are triggered in the reporter"
     0 * statusReporter.reportSampleStatusUpdate(_)
   }
@@ -45,7 +45,7 @@ class ReportSinceInstantSpec extends Specification {
 
     when: "the reporter is run"
     underTest = new ReportSinceInstant(limsQueryService, statusReporter, updateSearchService)
-    underTest.call()
+    underTest.run()
 
     then: "all sample updates are triggered in the reporter"
     n * statusReporter.reportSampleStatusUpdate(_)
