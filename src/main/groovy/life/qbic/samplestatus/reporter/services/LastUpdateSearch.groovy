@@ -24,9 +24,6 @@ class LastUpdateSearch implements UpdateSearchService {
             // Parse the first line as date with format "YYYY-mm-dd'T'HH:mm:ss.SSSZ" (ISO 8601)
             // For example "2021-12-01T12:00:00.000Z"
             lastSearch = Instant.parse(lastSearchDate)
-        } else {
-            // No previous run exists, writes current execution time in there.
-            lastSearch = Instant.now()
         }
     }
 
