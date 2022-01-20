@@ -52,9 +52,9 @@ class RealLimsQueryService implements LimsQueryService {
      * @param applicationServerUrl the openBIS application server url
      * @param serverTimeout the server connection timeout
      */
-    RealLimsQueryService(@Value('${service.openbis.user.name}') String openbisUser,
-                         @Value('${service.openbis.user.password}') String openbisPassword,
-                         @Value('${service.openbis.server.api.url}') String applicationServerUrl,
+    RealLimsQueryService(@Value('${service.openbis.lims.user.name}') String openbisUser,
+                         @Value('${service.openbis.lims.user.password}') String openbisPassword,
+                         @Value('${service.openbis.lims.server.api.url}') String applicationServerUrl,
                          @Value('${service.openbis.server.timeout}') Integer serverTimeout) {
         this.openBisApplicationServerApi = HttpInvokerUtils.createServiceStub(
                 IApplicationServerApi.class,
@@ -103,14 +103,16 @@ class RealLimsQueryService implements LimsQueryService {
         Map<String, String> properties = limsSample.getProperties()
         String sampleBarcode = properties.get("QBIC_BARCODE")
 
-        life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleCode: sampleBarcode)
 
-        Date modificationDate = sample.getModificationDate()
+        life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleBarcode)
+
+        Date modificationDate = limsSample.getModificationDate()
         Result<String, Exception> updatedStatus = new SampleStatusMapper().apply(properties.get("SAMPLE_STATUS"))
 
         switch (updatedStatus) {
             case { it.isOk() }: return Result.of(new SampleUpdate(sample: sample, updatedStatus: updatedStatus.getValue(), modificationDate: modificationDate.toInstant())); break
             case { it.isError() }: return Result.of(updatedStatus.getError()); break
+            default: throw new RuntimeException("Result neither Ok nor Error. This is not expected!")
         }
     }
 

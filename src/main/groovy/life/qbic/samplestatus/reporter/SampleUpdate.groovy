@@ -1,5 +1,7 @@
 package life.qbic.samplestatus.reporter
 
+import groovy.transform.EqualsAndHashCode
+
 import java.time.Instant
 
 /**
@@ -7,8 +9,14 @@ import java.time.Instant
  *
  * @since 0.1.0
  */
+@EqualsAndHashCode
 class SampleUpdate {
     Sample sample
     String updatedStatus
     Instant modificationDate
+
+    @Override
+    String toString() {
+        return "{$sample, $updatedStatus, $modificationDate}"
+    }
 }
