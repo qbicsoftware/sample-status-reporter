@@ -17,7 +17,7 @@ interface UpdateSearchService {
      *
      * @since 0.1.0
      */
-    Instant getLastUpdateSearchTimePoint()
+    Optional<Instant> getLastUpdateSearchTimePoint()
 
     /**
      * <p>Saves the last search time-point persistently.</p>

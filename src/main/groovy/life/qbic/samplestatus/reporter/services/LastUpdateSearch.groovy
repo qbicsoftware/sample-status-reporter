@@ -34,8 +34,8 @@ class LastUpdateSearch implements UpdateSearchService {
      * @inheritDocs
      */
     @Override
-    Instant getLastUpdateSearchTimePoint() {
-        return this.lastSearch
+    Optional<Instant> getLastUpdateSearchTimePoint() {
+        return Optional.ofNullable(this.lastSearch)
     }
 
     /**
