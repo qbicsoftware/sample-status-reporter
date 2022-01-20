@@ -5,6 +5,7 @@ import life.qbic.samplestatus.reporter.Sample
 import life.qbic.samplestatus.reporter.SampleStatusReporter
 import life.qbic.samplestatus.reporter.SampleUpdate
 import life.qbic.samplestatus.reporter.api.LimsQueryService
+import life.qbic.samplestatus.reporter.api.UpdateSearchService
 import spock.lang.Specification
 
 import java.time.Instant
@@ -14,14 +15,16 @@ class ReportSinceInstantSpec extends Specification {
   ReportSinceInstant underTest
   LimsQueryService limsQueryService = Stub()
   SampleStatusReporter statusReporter = Mock()
+  UpdateSearchService updateSearchService = Stub()
 
   def "when no samples were updated then no sample updates are triggered in the reporter"() {
     when: "no samples were updated"
 
     limsQueryService.getUpdatedSamples(_ as Instant) >> []
+    updateSearchService.getLastUpdateSearchTimePoint() >> Optional.empty()
 
-    underTest = new ReportSinceInstant(limsQueryService, statusReporter)
-    underTest.run()
+    underTest = new ReportSinceInstant(limsQueryService, statusReporter, updateSearchService)
+    underTest.call()
     then: "no sample updates are triggered in the reporter"
     0 * statusReporter.reportSampleStatusUpdate(_)
   }
@@ -38,9 +41,11 @@ class ReportSinceInstantSpec extends Specification {
       updates.add(Result.of(sampleUpdate))
     }
     limsQueryService.getUpdatedSamples(_ as Instant) >> updates
+    updateSearchService.getLastUpdateSearchTimePoint() >> Optional.empty()
+
     when: "the reporter is run"
-    underTest = new ReportSinceInstant(limsQueryService, statusReporter)
-    underTest.run()
+    underTest = new ReportSinceInstant(limsQueryService, statusReporter, updateSearchService)
+    underTest.call()
 
     then: "all sample updates are triggered in the reporter"
     n * statusReporter.reportSampleStatusUpdate(_)

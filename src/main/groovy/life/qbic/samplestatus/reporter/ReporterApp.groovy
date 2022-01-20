@@ -33,24 +33,18 @@ class ReporterApp implements CommandLineRunner {
 
     @Override
     void run(String... args) throws Exception {
-        UpdateSearchService updateSearchService = applicationContext.getBean("lastUpdateSearch", UpdateSearchService.class)
+        UpdateSearchService updateSearchService = applicationContext.getBean("lastUpdateSearch")
         LimsQueryService limsQueryService = applicationContext.getBean("realLimsQueryService")
         SampleStatusReporter statusReporter = applicationContext.getBean("qbicSampleStatusReporter")
 
-        def reportSinceInstant = new ReportSinceInstant(limsQueryService, statusReporter)
+        ReportSinceInstant reportSinceInstant = new ReportSinceInstant(limsQueryService, statusReporter, updateSearchService)
 
-        int exitCode
+        int exitCode = 1
         try {
             exitCode = new CommandLine(reportSinceInstant).execute(args)
-        } catch (Exception exception) {
-            log.error(exception.getMessage(), exception)
-            exitCode = 1
+        } catch (Exception e) {
+            log.error(e.getMessage(), e)
         }
-
-        if (exitCode != 0) {
-            System.exit(exitCode)
-        }
-        updateSearchService.saveLastSearchTimePoint(reportSinceInstant.getTimePoint())
-        System.exit(0)
+        System.exit(exitCode)
     }
 }
