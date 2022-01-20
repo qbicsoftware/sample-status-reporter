@@ -27,7 +27,7 @@ For this application to be run the following environment variables need to be se
 Checkout the latest code from `main` and run the Maven goal `spring-boot:run`:
 
 ```
-mvn spring-boot:run [-Drun.arguments=[-hV],[-t=<timePoint>]]
+mvn spring-boot:run [-Dspring-boot.run.arguments=[-hV],[-t=<timePoint>]]
   -h, --help      Show this help message and exit.
   -t, --time-point=<timePoint>
                   Point in time from where to search for updates e.g. '2022-01-01T00:00:00Z'.
