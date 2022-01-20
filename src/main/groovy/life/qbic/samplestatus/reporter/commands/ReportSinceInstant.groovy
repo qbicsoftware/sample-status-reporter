@@ -11,6 +11,7 @@ import picocli.CommandLine
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.function.Supplier
 
 /**
  * <b>Command that runs the app for a given instant</b>
@@ -29,16 +30,17 @@ class ReportSinceInstant implements Runnable {
   private final SampleStatusReporter statusReporter
   private final UpdateSearchService updateSearchService
 
+  private Supplier<Instant> defaultTimePoint = () -> updateSearchService.getLastUpdateSearchTimePoint().orElse(Instant.now().minus(1, ChronoUnit.DAYS))
+
   ReportSinceInstant(LimsQueryService limsQueryService, SampleStatusReporter statusReporter, UpdateSearchService updateSearchService) {
     this.limsQueryService = limsQueryService
     this.statusReporter = statusReporter
     this.updateSearchService = updateSearchService
     if (!timePoint) {
-      timePoint = defaultTimePoint
+      timePoint = defaultTimePoint.get()
     }
   }
 
-  private Instant defaultTimePoint = updateSearchService.getLastUpdateSearchTimePoint().orElse(Instant.now().minus(1, ChronoUnit.DAYS))
 
   /**
    * When an object implementing interface {@code Runnable} is used
