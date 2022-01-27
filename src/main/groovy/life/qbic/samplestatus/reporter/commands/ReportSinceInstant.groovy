@@ -68,6 +68,13 @@ class ReportSinceInstant implements Runnable {
               .map(Result::getValue)
               .peek(it -> log.info("\tUpdating $it"))
               .forEach(statusReporter::reportSampleStatusUpdate)
+      def errors = updatedSamples.stream()
+              .filter(Result::isError)
+              .map(Result::getError).collect()
+      if (errors.size() > 0) {
+        log.warn("Encountered ${errors.size()} errors.")
+        errors.forEach((Exception e) -> log.error(e.getMessage(), e))
+      }
       log.info("Finished processing.")
     } catch (Exception e) {
       throw new RuntimeException("Could not report sample updates successfully.", e)
