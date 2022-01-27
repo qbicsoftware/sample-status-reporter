@@ -118,7 +118,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
 
         protected static String createJsonFromLocationWithStatus(Location location, String status, Person responsiblePerson) {
             Map locationMap = convertLocationToMap(location, responsiblePerson)
-            locationMap.put("status", status)
+            locationMap.put("sample_status", status)
             return JsonOutput.toJson(locationMap)
         }
 
