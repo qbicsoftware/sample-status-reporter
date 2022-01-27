@@ -178,7 +178,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
         private static Map<String, ?> convertLocationToMap(Location location, Person responsiblePerson) {
             Map locationMap = [
                     "name": location.getLabel(),
-                    "responsible_person": responsiblePerson.getFullName(),
+                    "responsible_person": responsiblePerson.getFirstName() + " " + responsiblePerson.getLastName(),
                     "responsible_person_email": responsiblePerson.getEmail(),
                     "address": convertAddressToMap(location.getAddress())
             ]
