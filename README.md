@@ -4,8 +4,8 @@ A minimal working starter template for Spring Boot applications with a demonstra
 ## System setup
 For this application to be run the following environment variables need to be set:
 
-| Name                              | Description                                                            |
-|-----------------------------------|------------------------------------------------------------------------|
+| Name                                | Description                                                            |
+|-------------------------------------|------------------------------------------------------------------------|
 | `LAST_UPDATE_FILE`                  | A path to a persistent file. The last successful run is stored here.   |
 | `LIMS_PASSWORD`                     | The password to access the OpenBiS LIMS                                |
 | `LIMS_SERVER_URL`                   | The URL to the OpenBiS LIMS API                                        |
@@ -17,8 +17,7 @@ For this application to be run the following environment variables need to be se
 | `SAMPLE_TRACKING_URL`               | The base URL for the sample tracking service                           |
 | `USER_DB_DIALECT`                   | The database dialect of the user database                              |
 | `USER_DB_DRIVER`                    | The database driver for the user database                              |
-| `USER_DB_HOST`                      | The URL to the host of the user database                               |
-| `USER_DB_NAME`                      | The database name                                                      |
+| `USER_DB_HOST`                      | The URL to the host of the user database containing the database name  |
 | `USER_DB_USER_NAME`                 | The database user name                                                 |
 | `USER_DB_USER_PW`                   | The database user password                                             |
 

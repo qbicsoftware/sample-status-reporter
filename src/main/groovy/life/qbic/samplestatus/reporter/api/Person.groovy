@@ -11,7 +11,7 @@ import javax.persistence.*
  */
 @ToString
 @Entity
-@Table(name = "persons")
+@Table(name = "person")
 class Person {
 
     @Id
