@@ -1,7 +1,7 @@
 package life.qbic.samplestatus.reporter
 
-import java.util.function.Function
 import java.util.function.Consumer
+import java.util.function.Function
 
 /**
  * <b>Class Result</b>
@@ -140,6 +140,7 @@ class Result<V, E extends Exception> {
         switch (this) {
             case { it.isError() }: return new Result<U, E>(err as E); break
             case { it.isOk() }: return apply(function, this.getValue() as V); break
+            default: throw new IllegalStateException("This should be unreachable. Result neither is ok nor error.")
         }
     }
 
