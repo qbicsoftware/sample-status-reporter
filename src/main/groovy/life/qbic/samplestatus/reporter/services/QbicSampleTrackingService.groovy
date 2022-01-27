@@ -54,15 +54,6 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     @Override
-    void updateSampleLocation(String sampleCode, Location location, Person responsiblePerson) throws SampleUpdateException {
-        String locationJson = DtoMapper.createJsonFromLocation(location, responsiblePerson)
-        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
-        if (response.statusCode() != 200) {
-            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.body()}")
-        }
-    }
-
-    @Override
     void updateSampleLocation(String sampleCode, Location location, String status, Person responsiblePerson) throws SampleUpdateException {
         String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, responsiblePerson)
         HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
@@ -123,11 +114,6 @@ class QbicSampleTrackingService implements SampleTrackingService {
 
             List<Map> locationMaps = parseJsonToList(putativeLocationJson )
             return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst()
-        }
-
-        protected static String createJsonFromLocation(Location location, Person responsiblePerson) {
-            Map locationMap = convertLocationToMap(location, responsiblePerson)
-            return JsonOutput.toJson(locationMap)
         }
 
         protected static String createJsonFromLocationWithStatus(Location location, String status, Person responsiblePerson) {
