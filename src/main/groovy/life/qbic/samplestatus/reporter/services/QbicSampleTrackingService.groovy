@@ -79,7 +79,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     private URI createSampleUpdateURI(String sampleCode) {
-        return URI.create("${sampleTrackingBaseUrl}/${sampleCode}/currentLocation/")
+        return URI.create("${sampleTrackingBaseUrl}/samples/${sampleCode}/currentLocation/")
     }
 
     private HttpResponse<String> requestLocation(URI requestURI) {
