@@ -50,4 +50,5 @@
       "type": "java.lang.String",
       "description": "Description for databases.users.user.password."
     }
-  ] }
+  ]
+}

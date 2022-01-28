@@ -8,5 +8,5 @@ import org.hibernate.Session
  * @since: 1.0.0
  */
 interface SessionProvider {
-    Session getCurrentSession()
+  Session getCurrentSession()
 }

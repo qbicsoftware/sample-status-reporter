@@ -10,39 +10,39 @@ import java.time.Instant
 @Component
 class LastUpdateSearch implements UpdateSearchService {
 
-    @Value('${service.last-update.file}')
-    String filePath
+  @Value('${service.last-update.file}')
+  String filePath
 
-    private Instant lastSearch
+  private Instant lastSearch
 
-    @PostConstruct
-    void init() {
-        // Read the file content
-        String lastSearchDate = new File(filePath).getText('UTF-8').trim()
+  @PostConstruct
+  void init() {
+    // Read the file content
+    String lastSearchDate = new File(filePath).getText('UTF-8').trim()
 
-        if (lastSearchDate) {
-            // Parse the first line as date with format "YYYY-mm-dd'T'HH:mm:ss.SSSZ" (ISO 8601)
-            // For example "2021-12-01T12:00:00.000Z"
-            lastSearch = Instant.parse(lastSearchDate)
-        }
+    if (lastSearchDate) {
+      // Parse the first line as date with format "YYYY-mm-dd'T'HH:mm:ss.SSSZ" (ISO 8601)
+      // For example "2021-12-01T12:00:00.000Z"
+      lastSearch = Instant.parse(lastSearchDate)
     }
+  }
 
-    /**
-     * @inheritDocs
-     */
-    @Override
-    Optional<Instant> getLastUpdateSearchTimePoint() {
-        return Optional.ofNullable(this.lastSearch)
-    }
+  /**
+   * @inheritDocs
+   */
+  @Override
+  Optional<Instant> getLastUpdateSearchTimePoint() {
+    return Optional.ofNullable(this.lastSearch)
+  }
 
-    /**
-     * @inheritDocs
-     */
-    @Override
-    void saveLastSearchTimePoint(Instant lastSearchTimePoint) {
-        new File(filePath).withWriter {
-            it.write(lastSearchTimePoint.toString())
-            lastSearch = lastSearchTimePoint
-        }
+  /**
+   * @inheritDocs
+   */
+  @Override
+  void saveLastSearchTimePoint(Instant lastSearchTimePoint) {
+    new File(filePath).withWriter {
+      it.write(lastSearchTimePoint.toString())
+      lastSearch = lastSearchTimePoint
     }
+  }
 }

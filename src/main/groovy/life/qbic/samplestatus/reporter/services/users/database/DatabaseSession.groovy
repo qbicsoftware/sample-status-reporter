@@ -28,43 +28,43 @@ import javax.annotation.PreDestroy
 @Component
 class DatabaseSession implements SessionProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(DatabaseSession.class)
+  private static final Logger log = LoggerFactory.getLogger(DatabaseSession.class)
 
-    @Autowired
-    private UserDatabaseConfig userDatabaseConfig
+  @Autowired
+  private UserDatabaseConfig userDatabaseConfig
 
-    private SessionFactory sessionFactory
+  private SessionFactory sessionFactory
 
-    @PostConstruct
-    void init() {
-        sessionFactory = initHibernate(userDatabaseConfig)
-    }
+  @PostConstruct
+  void init() {
+    sessionFactory = initHibernate(userDatabaseConfig)
+  }
 
-    private static SessionFactory initHibernate(UserDatabaseConfig dbConfig) {
-        var config = new Configuration()
-        var properties = new Properties()
-        println dbConfig.getDriver()
-        properties[Environment.DRIVER] = dbConfig.getDriver()
-        properties[Environment.URL] = dbConfig.getUrl()
-        properties[Environment.USER] = dbConfig.getUser()
-        properties[Environment.PASS] = dbConfig.getPassword()
-        properties[Environment.POOL_SIZE] = 1
-        properties[Environment.DIALECT] = dbConfig.getSqlDialect()
-        properties[Environment.CURRENT_SESSION_CONTEXT_CLASS] = "thread"
+  private static SessionFactory initHibernate(UserDatabaseConfig dbConfig) {
+    var config = new Configuration()
+    var properties = new Properties()
+    println dbConfig.getDriver()
+    properties[Environment.DRIVER] = dbConfig.getDriver()
+    properties[Environment.URL] = dbConfig.getUrl()
+    properties[Environment.USER] = dbConfig.getUser()
+    properties[Environment.PASS] = dbConfig.getPassword()
+    properties[Environment.POOL_SIZE] = 1
+    properties[Environment.DIALECT] = dbConfig.getSqlDialect()
+    properties[Environment.CURRENT_SESSION_CONTEXT_CLASS] = "thread"
 
-        config.setProperties(properties)
+    config.setProperties(properties)
 
-        config.addAnnotatedClass(Person.class).buildSessionFactory()
-    }
+    config.addAnnotatedClass(Person.class).buildSessionFactory()
+  }
 
-    @Override
-    Session getCurrentSession() {
-        return sessionFactory.getCurrentSession()
-    }
+  @Override
+  Session getCurrentSession() {
+    return sessionFactory.getCurrentSession()
+  }
 
-    @PreDestroy
-    void destroy() {
-        log.debug("Closing session factory...")
-        sessionFactory.close()
-    }
+  @PreDestroy
+  void destroy() {
+    log.debug("Closing session factory...")
+    sessionFactory.close()
+  }
 }

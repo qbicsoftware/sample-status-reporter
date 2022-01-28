@@ -19,29 +19,29 @@ import org.springframework.stereotype.Component
 @Component
 class QbicUserService implements UserService {
 
-    @Autowired
-    UserDatabaseConfig userServiceConfig
+  @Autowired
+  UserDatabaseConfig userServiceConfig
 
-    @Autowired
-    SessionProvider connectionProvider
+  @Autowired
+  SessionProvider connectionProvider
 
-    static Logger logger = LogManager.getLogger(QbicUserService.class)
+  static Logger logger = LogManager.getLogger(QbicUserService.class)
 
-    Optional<Person> getPerson(String userId) {
-        return fetchPerson(userId)
+  Optional<Person> getPerson(String userId) {
+    return fetchPerson(userId)
+  }
+
+  private Optional<Person> fetchPerson(String userId) {
+    try (Session session = connectionProvider.getCurrentSession()) {
+      session.beginTransaction()
+      var query = session.createQuery("FROM Person p WHERE p.userId = :user_id")
+      query.setParameter("user_id", userId)
+      var personsFound = query.getResultList() as List<Person>
+      return Optional.ofNullable(personsFound.first())
+    } catch (Exception e) {
+      logger.error(e.getMessage(), e)
+      throw new ServiceException("Unable to execute person search for person with id = $userId.")
     }
-
-    private Optional<Person> fetchPerson(String userId) {
-        try (Session session = connectionProvider.getCurrentSession()) {
-            session.beginTransaction()
-            var query = session.createQuery("FROM Person p WHERE p.userId = :user_id")
-            query.setParameter("user_id", userId)
-            var personsFound = query.getResultList() as List<Person>
-            return Optional.ofNullable(personsFound.first())
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e)
-            throw new ServiceException("Unable to execute person search for person with id = $userId.")
-        }
-    }
+  }
 }
 

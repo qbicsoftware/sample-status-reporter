@@ -21,23 +21,23 @@ import org.springframework.stereotype.Component
 @ConfigurationProperties
 class NcctLocationService implements LocationService {
 
-    @Value('${service.sampletracking.location.user}')
-    private String userId
+  @Value('${service.sampletracking.location.user}')
+  private String userId
 
-    @Autowired
-    private SampleTrackingService sampleTrackingService
+  @Autowired
+  private SampleTrackingService sampleTrackingService
 
-    @Autowired
-    private UserService userService
+  @Autowired
+  private UserService userService
 
-    @Override
-    Optional<Location> getCurrentLocation() {
-        return sampleTrackingService.getLocationForUser(userId)
-    }
+  @Override
+  Optional<Location> getCurrentLocation() {
+    return sampleTrackingService.getLocationForUser(userId)
+  }
 
-    @Override
-    Optional<Person> getResponsiblePerson() {
-        Optional<Person> responsiblePerson = userService.getPerson(userId)
-        return responsiblePerson
-    }
+  @Override
+  Optional<Person> getResponsiblePerson() {
+    Optional<Person> responsiblePerson = userService.getPerson(userId)
+    return responsiblePerson
+  }
 }

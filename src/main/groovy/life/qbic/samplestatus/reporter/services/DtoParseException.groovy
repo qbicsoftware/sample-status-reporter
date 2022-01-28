@@ -6,7 +6,7 @@ package life.qbic.samplestatus.reporter.services
  * @since 1.0.0
  */
 class DtoParseException extends RuntimeException {
-    DtoParseException(String message) {
-        super(message)
-    }
+  DtoParseException(String message) {
+    super(message)
+  }
 }

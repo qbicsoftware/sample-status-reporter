@@ -14,93 +14,93 @@ import javax.persistence.*
 @Table(name = "person")
 class Person {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    Integer id
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  Integer id
 
-    @Column(name = "user_id")
-    String userId
+  @Column(name = "user_id")
+  String userId
 
-    @Column(name = "first_name")
-    String firstName
+  @Column(name = "first_name")
+  String firstName
 
-    @Column(name = "last_name")
-    String lastName
+  @Column(name = "last_name")
+  String lastName
 
-    @Column(name = "title")
-    String title
+  @Column(name = "title")
+  String title
 
-    @Column(name = "email")
-    String email
+  @Column(name = "email")
+  String email
 
-    @Column(name = "active")
-    Integer active
+  @Column(name = "active")
+  Integer active
 
-    Person() {}
+  Person() {}
 
-    Person(String userId, String firstName, String lastName, String title, String email, Integer active) {
-        this.userId = userId
-        this.firstName = firstName
-        this.lastName = lastName
-        this.title = title
-        this.email = email
-        this.active = active
-    }
+  Person(String userId, String firstName, String lastName, String title, String email, Integer active) {
+    this.userId = userId
+    this.firstName = firstName
+    this.lastName = lastName
+    this.title = title
+    this.email = email
+    this.active = active
+  }
 
-    Integer getId() {
-        return id
-    }
+  Integer getId() {
+    return id
+  }
 
-    void setId(Integer id) {
-        this.id = id
-    }
+  void setId(Integer id) {
+    this.id = id
+  }
 
-    String getUserId() {
-        return userId
-    }
+  String getUserId() {
+    return userId
+  }
 
-    void setUserId(String userId) {
-        this.userId = userId
-    }
+  void setUserId(String userId) {
+    this.userId = userId
+  }
 
-    String getFirstName() {
-        return firstName
-    }
+  String getFirstName() {
+    return firstName
+  }
 
-    void setFirstName(String firstName) {
-        this.firstName = firstName
-    }
+  void setFirstName(String firstName) {
+    this.firstName = firstName
+  }
 
-    String getLastName() {
-        return lastName
-    }
+  String getLastName() {
+    return lastName
+  }
 
-    void setLastName(String lastName) {
-        this.lastName = lastName
-    }
+  void setLastName(String lastName) {
+    this.lastName = lastName
+  }
 
-    String getTitle() {
-        return title
-    }
+  String getTitle() {
+    return title
+  }
 
-    void setTitle(String title) {
-        this.title = title
-    }
+  void setTitle(String title) {
+    this.title = title
+  }
 
-    String getEmail() {
-        return email
-    }
+  String getEmail() {
+    return email
+  }
 
-    void setEmail(String email) {
-        this.email = email
-    }
+  void setEmail(String email) {
+    this.email = email
+  }
 
-    Integer getActive() {
-        return active
-    }
+  Integer getActive() {
+    return active
+  }
 
-    void setActive(Integer active) {
-        this.active = active
-    }
+  void setActive(Integer active) {
+    this.active = active
+  }
 }

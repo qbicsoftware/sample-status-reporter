@@ -1,9 +1,11 @@
-# LIMS Sample Status Reporter 
+# LIMS Sample Status Reporter
+
 [![CodeQL](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/codeql-analysis.yml)
 [![Latest Release ](https://img.shields.io/github/v/release/qbicsoftware/sample-status-reporter.svg)](https://github.com/qbicsoftware/sample-status-reporter/releases)
 ![Groovy Language](https://img.shields.io/badge/language-groovy-blue.svg)
 
 ## System setup
+
 For this application to be run the following environment variables need to be set:
 
 | Name                                | Description                                                            |

@@ -10,14 +10,14 @@ import groovy.transform.EqualsAndHashCode
 @EqualsAndHashCode
 class Sample {
 
-    String sampleCode
+  String sampleCode
 
-    Sample(String sampleCode) {
-        this.sampleCode = sampleCode
-    }
+  Sample(String sampleCode) {
+    this.sampleCode = sampleCode
+  }
 
-    @Override
-    String toString() {
-        return "$sampleCode"
-    }
+  @Override
+  String toString() {
+    return "$sampleCode"
+  }
 }

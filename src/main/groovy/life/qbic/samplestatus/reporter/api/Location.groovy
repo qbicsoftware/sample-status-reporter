@@ -4,12 +4,12 @@ import groovy.transform.ToString
 
 @ToString
 class Location {
-    String label
+  String label
 
-    String contactPerson
+  String contactPerson
 
-    String contactEmail
+  String contactEmail
 
-    Address address
+  Address address
 
 }

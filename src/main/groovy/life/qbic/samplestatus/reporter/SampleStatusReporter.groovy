@@ -9,6 +9,6 @@ package life.qbic.samplestatus.reporter
  */
 interface SampleStatusReporter {
 
-    void reportSampleStatusUpdate(SampleUpdate sampleUpdate)
+  void reportSampleStatusUpdate(SampleUpdate sampleUpdate)
 
 }

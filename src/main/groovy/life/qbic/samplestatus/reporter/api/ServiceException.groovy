@@ -9,11 +9,11 @@ package life.qbic.samplestatus.reporter.api
  * @since 1.0.0
  */
 class ServiceException extends RuntimeException {
-    ServiceException() {
-        super()
-    }
+  ServiceException() {
+    super()
+  }
 
-    ServiceException(String message) {
-        super(message)
-    }
+  ServiceException(String message) {
+    super(message)
+  }
 }
