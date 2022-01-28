@@ -1,5 +1,7 @@
-# Spring Boot Starter (template)
-A minimal working starter template for Spring Boot applications with a demonstration of Java annotation-based [Inversion of Control](https://stackoverflow.com/questions/3058/what-is-inversion-of-control) via [Dependency Injection](https://stackoverflow.com/questions/130794/what-is-dependency-injection). 
+# LIMS Sample Status Reporter 
+[![CodeQL](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/codeql-analysis.yml)
+[![Latest Release ](https://img.shields.io/github/v/release/qbicsoftware/sample-status-reporter.svg)](https://github.com/qbicsoftware/sample-status-reporter/releases)
+![Groovy Language](https://img.shields.io/badge/language-groovy-blue.svg)
 
 ## System setup
 For this application to be run the following environment variables need to be set:
@@ -34,7 +36,6 @@ mvn spring-boot:run [-Dspring-boot.run.arguments=[-hV],[-t=<timePoint>]]
                   If never run successfully defaults to the same time yesterday.
   -V, --version   Print version information and exit.
 ```
-
 
 
 
