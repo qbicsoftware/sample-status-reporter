@@ -11,7 +11,7 @@ import java.time.Instant
  * <p>Provides access to a laboratory information system and enables clients to submit simple
  * sample queries.</p>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 interface LimsQueryService {
 
@@ -32,7 +32,7 @@ interface LimsQueryService {
      * @param updatedSince an instance that configures the query from which time-point in the past
      * updated samples shall be listed.
      * @return a list of updated samples
-     * @since 0.1.0
+     * @since 1.0.0
      */
     List<Result<SampleUpdate, Exception>> getUpdatedSamples(Instant updatedSince)
 }

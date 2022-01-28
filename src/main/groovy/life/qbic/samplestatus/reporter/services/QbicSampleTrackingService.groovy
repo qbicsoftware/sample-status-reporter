@@ -21,11 +21,10 @@ import java.time.format.DateTimeFormatter
 import static java.time.ZoneOffset.UTC
 
 /**
- * <class short description - 1 Line!>
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * This service provides fundamental access to sample-tracking persistence. It allows to retrieve information and stores information in the system.
  *
- * @since <version tag>
+ * @since 1.0.0
  */
 @Component
 @ConfigurationProperties

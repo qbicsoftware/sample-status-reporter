@@ -7,7 +7,7 @@ import java.time.Instant
 /**
  * <b>Value Class SampleUpdate</b>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @EqualsAndHashCode
 class SampleUpdate {

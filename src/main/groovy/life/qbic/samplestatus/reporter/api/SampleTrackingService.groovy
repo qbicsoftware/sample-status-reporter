@@ -28,6 +28,8 @@ interface SampleTrackingService {
      * @param sampleCode the code of the sample changing status or location
      * @param location the new location with a sample status already set
      * @param status sample status to be set.
+     * @param timestamp the point in time that will be recorded as time of this update
+     * @param responsiblePerson the person responsible for this update
      * @throws SampleUpdateException in case the sample update was unsuccessful
      * @since 1.0.0
      */

@@ -7,7 +7,7 @@ import java.time.Instant
  *
  * <p>Provides the time point of the last update search</p>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 interface UpdateSearchService {
 
@@ -15,7 +15,7 @@ interface UpdateSearchService {
      * <p>Returns the last update search time point.</p>
      * @return the last update search time point.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     Optional<Instant> getLastUpdateSearchTimePoint()
 
@@ -23,7 +23,7 @@ interface UpdateSearchService {
      * <p>Saves the last search time-point persistently.</p>
      * @param lastSearchTimePoint the time-point of the last search
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     void saveLastSearchTimePoint(Instant lastSearchTimePoint)
 }

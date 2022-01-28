@@ -7,7 +7,7 @@ import java.util.function.Function
 /**
  * Tests for the {@link Result} class.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 class ResultSpec extends Specification {
 
@@ -103,7 +103,7 @@ class ResultSpec extends Specification {
         stringResult.getError().getMessage() == exceptionMessage
     }
 
-    def "Mapping a function to a result with value must the target result type with target value type and target value"() {
+    def "Mapping a function to a result with value must return the target result type with target value type and target value"() {
         given:
         // A six-char String
         String message = "Hello!"
@@ -120,7 +120,7 @@ class ResultSpec extends Specification {
         lengthResult.getValue() == message.length() // 6
     }
 
-    def "Mapping a function to a result with error must the target result type with target value type and input error"() {
+    def "Mapping a function to a result with error must return the target result type with target value type and input error"() {
         given:
         String message = "Failure!"
         Result<String, Exception> stringResult = Result.of(new RuntimeException(message))

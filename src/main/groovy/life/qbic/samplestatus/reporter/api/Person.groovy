@@ -5,9 +5,9 @@ import groovy.transform.ToString
 import javax.persistence.*
 
 /**
- * <p>A users object that represents a users responsible for a location</p>
+ * <p>Represents a user responsible for a location</p>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @ToString
 @Entity

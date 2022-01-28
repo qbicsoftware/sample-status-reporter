@@ -9,14 +9,14 @@ import java.util.function.Function
  *
  * <p>Takes a String value and tries to map it to a known sample status.</p>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 class SampleStatusMapper implements Function<String, Result<String, Exception>>{
 
-    private static final String SAMPLE_RECEIVED = "SAMPLE_RECEIVED";
-    private static final String SAMPLE_QC_PASS = "SAMPLE_QC_PASS";
-    private static final String SAMPLE_QC_FAIL = "SAMPLE_QC_FAIL";
-    private static final String LIBRARY_PREP_FINISHED = "LIBRARY_PREP_FINISHED";
+    private static final String SAMPLE_RECEIVED = "SAMPLE_RECEIVED"
+    private static final String SAMPLE_QC_PASS = "SAMPLE_QC_PASS"
+    private static final String SAMPLE_QC_FAIL = "SAMPLE_QC_FAIL"
+    private static final String LIBRARY_PREP_FINISHED = "LIBRARY_PREP_FINISHED"
 
     /**
      * <p>Tries to map a String value to a known sample status.</p>

@@ -1,11 +1,11 @@
 package life.qbic.samplestatus.reporter
 
 /**
- * <b><short description></b>
+ * <b>Reports sample updates to the ecosystem</b>
  *
- * <p><detailed description></p>
+ * <p>Classes implementing this interface will consume sample updates and propagate them to the persistence layer.</p>
  *
- * @since <version tag>
+ * @since 1.0.0
  */
 interface SampleStatusReporter {
 

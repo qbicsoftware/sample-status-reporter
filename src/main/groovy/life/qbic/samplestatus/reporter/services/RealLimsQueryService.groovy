@@ -24,7 +24,7 @@ import java.time.Instant
  * Enables the client to request sample information from the connected LIMS.
  * </p>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @Component
 @ConfigurationProperties

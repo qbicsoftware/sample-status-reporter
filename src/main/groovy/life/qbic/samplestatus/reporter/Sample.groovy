@@ -5,7 +5,7 @@ import groovy.transform.EqualsAndHashCode
 /**
  * <b>Value Class Sample</b>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @EqualsAndHashCode
 class Sample {
