@@ -116,7 +116,7 @@
       <artifactId>spring-web</artifactId>
     </dependency>
     <!-- dubious openBIS dependency, nobody knows the necessity of it, but the openBIS API client
-    has it as dependency. We also have no license information. We no that this is bad practise,
+    has it as dependency. We also have no license information. We know that this is bad practise,
     and we are ashamed.However, pressure is high to deliver the milestone, and we cannot clean
     up the mess others have done at the moment.
     We uploaded the binary to our Maven repository instance on http://qbic-repo.qbic.uni-tuebingen.de -->
