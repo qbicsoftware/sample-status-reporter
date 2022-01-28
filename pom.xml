@@ -10,10 +10,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>life.qbic</groupId>
-  <artifactId>spring-minimal-template</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
-  <name>spring-minimal-template</name>
-  <description>Demo project for Spring Boot</description>
+  <artifactId>sample-status-reporter</artifactId>
+  <version>1.0.0</version>
+  <name>sample-status-reporter</name>
+  <description>Spring Boot based Sample Status Reporter application</description>
   <properties>
     <java.version>17</java.version>
     <groovy.version>3.0.8</groovy.version>
