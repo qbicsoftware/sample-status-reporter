@@ -2,6 +2,8 @@ package life.qbic.samplestatus.reporter.api
 
 import life.qbic.samplestatus.reporter.services.SampleUpdateException
 
+import java.time.Instant
+
 /**
  * <b>Provides access to the sample tracking persistence layer.</b>
  *
@@ -24,20 +26,10 @@ interface SampleTrackingService {
      * Updates a sample to a given location with a status set in the location.
      * This information is stored on the persistence layer.
      * @param sampleCode the code of the sample changing status or location
-     * @param location the new location
-     * @throws SampleUpdateException in case the sample update was unsuccessful
-     * @since 1.0.0
-     */
-    void updateSampleLocation(String sampleCode, Location location, Person responsiblePerson) throws SampleUpdateException
-
-    /**
-     * Updates a sample to a given location with a status set in the location.
-     * This information is stored on the persistence layer.
-     * @param sampleCode the code of the sample changing status or location
      * @param location the new location with a sample status already set
      * @param status sample status to be set.
      * @throws SampleUpdateException in case the sample update was unsuccessful
      * @since 1.0.0
      */
-    void updateSampleLocation(String sampleCode, Location location, String status, Person responsiblePerson) throws SampleUpdateException
+    void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp, Person responsiblePerson) throws SampleUpdateException
 }

@@ -19,8 +19,6 @@ class UserDatabaseConfig  {
     String password
     @Value('${databases.users.database.url}')
     String url
-    @Value('${databases.users.database.name}')
-    String databaseName
     @Value('${databases.users.database.dialect}')
     String sqlDialect
     @Value('${databases.users.database.driver}')

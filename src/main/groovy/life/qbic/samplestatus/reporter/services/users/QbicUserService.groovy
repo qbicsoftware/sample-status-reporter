@@ -39,7 +39,7 @@ class QbicUserService implements UserService {
             var personsFound = query.getResultList() as List<Person>
             return Optional.ofNullable(personsFound.first())
         } catch (Exception e) {
-            logger.debug(e.getStackTrace().join("\n"))
+            logger.error(e.getMessage(), e)
             throw new ServiceException("Unable to execute person search for person with id = $userId.")
         }
     }

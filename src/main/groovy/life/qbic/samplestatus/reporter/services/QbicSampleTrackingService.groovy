@@ -1,6 +1,5 @@
 package life.qbic.samplestatus.reporter.services
 
-
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import life.qbic.samplestatus.reporter.api.Address
@@ -15,6 +14,11 @@ import javax.annotation.PostConstruct
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
+import static java.time.ZoneOffset.UTC
 
 /**
  * <class short description - 1 Line!>
@@ -54,17 +58,8 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     @Override
-    void updateSampleLocation(String sampleCode, Location location, Person responsiblePerson) throws SampleUpdateException {
-        String locationJson = DtoMapper.createJsonFromLocation(location, responsiblePerson)
-        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
-        if (response.statusCode() != 200) {
-            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.body()}")
-        }
-    }
-
-    @Override
-    void updateSampleLocation(String sampleCode, Location location, String status, Person responsiblePerson) throws SampleUpdateException {
-        String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, responsiblePerson)
+    void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp, Person responsiblePerson) throws SampleUpdateException {
+        String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, responsiblePerson, timestamp)
         HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
         if (response.statusCode() != 200) {
             throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.headers()}: ${response.body()}")
@@ -88,7 +83,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     private URI createSampleUpdateURI(String sampleCode) {
-        return URI.create("${sampleTrackingBaseUrl}/${sampleCode}/currentLocation/")
+        return URI.create("${sampleTrackingBaseUrl}/samples/${sampleCode}/currentLocation/")
     }
 
     private HttpResponse<String> requestLocation(URI requestURI) {
@@ -125,15 +120,18 @@ class QbicSampleTrackingService implements SampleTrackingService {
             return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst()
         }
 
-        protected static String createJsonFromLocation(Location location, Person responsiblePerson) {
+        protected static String createJsonFromLocationWithStatus(Location location, String status, Person responsiblePerson, Instant arrivalTime) {
             Map locationMap = convertLocationToMap(location, responsiblePerson)
+            locationMap.put("arrival_date", mapToLocationDateTimeString(arrivalTime))
+            locationMap.put("sample_status", status)
             return JsonOutput.toJson(locationMap)
         }
 
-        protected static String createJsonFromLocationWithStatus(Location location, String status, Person responsiblePerson) {
-            Map locationMap = convertLocationToMap(location, responsiblePerson)
-            locationMap.put("status", status)
-            return JsonOutput.toJson(locationMap)
+        private static String mapToLocationDateTimeString(Instant timestamp) {
+            // the pattern mentioned here is dictated by the data-model-lib location object
+            var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'Z'")
+                    .withZone(ZoneId.from(UTC))
+            return dateTimeFormatter.format(timestamp)
         }
 
         private static List<Map<?, ?>> parseJsonToList(String json) {
@@ -178,7 +176,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
         private static Map<String, ?> convertLocationToMap(Location location, Person responsiblePerson) {
             Map locationMap = [
                     "name": location.getLabel(),
-                    "responsible_person": responsiblePerson.getFullName(),
+                    "responsible_person": responsiblePerson.getFirstName() + " " + responsiblePerson.getLastName(),
                     "responsible_person_email": responsiblePerson.getEmail(),
                     "address": convertAddressToMap(location.getAddress())
             ]
