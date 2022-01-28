@@ -17,7 +17,7 @@ import picocli.CommandLine
  *
  * <p>The entry-point of the reporter application.</p>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @SpringBootApplication
 class ReporterApp implements CommandLineRunner {
