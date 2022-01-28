@@ -11,6 +11,7 @@ import picocli.CommandLine
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.stream.Collectors
 
 /**
  * <b>Command that runs the app for a given instant</b>
@@ -59,22 +60,30 @@ class ReportSinceInstant implements Runnable {
   @Override
   void run() {
     Instant executionTime = Instant.now()
+    List<Result<SampleUpdate, Exception>> updatedSamples
     try {
       log.info("Gathering updated samples since $timePoint ...")
-      List<Result<SampleUpdate, Exception>> updatedSamples = limsQueryService.getUpdatedSamples(getTimePoint())
+      updatedSamples = limsQueryService.getUpdatedSamples(getTimePoint())
       log.info("Found ${updatedSamples.size()} updated samples.")
+    } catch (Exception e) {
+      throw new RuntimeException("Could not report sample updates successfully.", e)
+    }
+
+    def errors = updatedSamples.stream()
+            .filter(Result::isError)
+            .map(Result::getError).collect()
+    if (errors.size() > 0) {
+      def errorMessages = errors.stream().map(RuntimeException::getMessage).collect(Collectors.joining("\n\t"))
+      errors.forEach((Exception e) -> log.debug(e.getMessage(), e))
+      throw new RuntimeException("Encountered ${errors.size()} errors retrieving updated samples: \n\t$errorMessages")
+    }
+
+    try {
       updatedSamples.stream()
               .filter(Result::isOk)
               .map(Result::getValue)
               .peek(it -> log.info("\tUpdating $it"))
               .forEach(statusReporter::reportSampleStatusUpdate)
-      def errors = updatedSamples.stream()
-              .filter(Result::isError)
-              .map(Result::getError).collect()
-      if (errors.size() > 0) {
-        log.warn("Encountered ${errors.size()} errors.")
-        errors.forEach((Exception e) -> log.error(e.getMessage(), e))
-      }
       log.info("Finished processing.")
     } catch (Exception e) {
       throw new RuntimeException("Could not report sample updates successfully.", e)

@@ -29,6 +29,37 @@ class ReportSinceInstantSpec extends Specification {
     0 * statusReporter.reportSampleStatusUpdate(_)
   }
 
+  def "given lims connection provides errors, when the reporter is run, then all errors are logged and the reporter fails"() {
+
+    given: "#n random sample updates"
+    List<Result<SampleUpdate, Exception>> updates = []
+    for (i in 0..< n) {
+      updates.add(Result.of(new RuntimeException("test exception $i")))
+    }
+    // add one valid update
+    Sample sample = new Sample(generateFakeSampleCode())
+    SampleUpdate sampleUpdate = new SampleUpdate()
+    sampleUpdate.setUpdatedStatus("DATA_AVAILABLE")
+    sampleUpdate.setSample(sample)
+    sampleUpdate.setModificationDate(Instant.now())
+    updates.add(Result.of(sampleUpdate))
+
+    limsQueryService.getUpdatedSamples(_ as Instant) >> updates
+    updateSearchService.getLastUpdateSearchTimePoint() >> Optional.empty()
+
+    when: "retrieving updated samples returns error results"
+    underTest = new ReportSinceInstant(limsQueryService, statusReporter, updateSearchService)
+    underTest.run()
+
+    then: "all errors are logged and the reporter fails"
+    0 * statusReporter.reportSampleStatusUpdate(_)
+    thrown(RuntimeException)
+
+    where:
+    n << [1, 2, 3, 33, 102]
+
+  }
+
   def "given #n random sample updates, when the reporter is run, then all sample updates are triggered in the reporter"() {
     given: "#n random sample updates"
     List<Result<SampleUpdate, Exception>> updates = []
