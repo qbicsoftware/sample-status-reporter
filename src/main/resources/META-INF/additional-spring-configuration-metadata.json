@@ -1,0 +1,54 @@
+{
+  "properties": [
+    {
+      "name": "service.sampletracking.auth.password",
+      "type": "java.lang.String",
+      "description": "Description for service.sampletracking.auth.password."
+    },
+    {
+      "name": "service.sampletracking.auth.user",
+      "type": "java.lang.String",
+      "description": "Description for service.sampletracking.auth.user."
+    },
+    {
+      "name": "service.sampletracking.location.endpoint",
+      "type": "java.lang.String",
+      "description": "Description for service.sampletracking.location.endpoint."
+    },
+    {
+      "name": "service.sampletracking.location.user",
+      "type": "java.lang.String",
+      "description": "Description for service.sampletracking.location.user."
+    },
+    {
+      "name": "service.sampletracking.url",
+      "type": "java.lang.String",
+      "description": "Description for service.sampletracking.url."
+    },
+    {
+      "name": "databases.users.database.host",
+      "type": "java.lang.String",
+      "description": "Description for databases.users.database.host."
+    },
+    {
+      "name": "databases.users.database.name",
+      "type": "java.lang.String",
+      "description": "Description for databases.users.database.name."
+    },
+    {
+      "name": "databases.users.database.port",
+      "type": "java.lang.String",
+      "description": "Description for databases.users.database.port."
+    },
+    {
+      "name": "databases.users.user.name",
+      "type": "java.lang.String",
+      "description": "Description for databases.users.user.name."
+    },
+    {
+      "name": "databases.users.user.password",
+      "type": "java.lang.String",
+      "description": "Description for databases.users.user.password."
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 name: Groovy Checkstyle
 
-on: [push]
+on: [ push ]
 
 jobs:
   build:
