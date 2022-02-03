@@ -11,7 +11,7 @@
 [![release](https://img.shields.io/github/v/release/qbicsoftware/sample-status-reporter?include_prereleases)](https://github.com/qbicsoftware/sample-status-reporter/releases)
 
 [![license](https://img.shields.io/github/license/qbicsoftware/sample-status-reporter)](https://github.com/qbicsoftware/sample-status-reporter/blob/main/LICENSE)
-![language](https://img.shields.io/badge/language-java-blue.svg)
+![language](https://img.shields.io/badge/language-groovy-blue.svg)
 ![framework](https://img.shields.io/badge/framework-spring-blue.svg)
 
 </div>
