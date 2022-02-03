@@ -1,8 +1,17 @@
-# LIMS Sample Status Reporter
+# <p align="center">LIMS Sample Status Reporter</p>
 
-[![CodeQL](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/codeql-analysis.yml)
-[![Latest Release ](https://img.shields.io/github/v/release/qbicsoftware/sample-status-reporter.svg)](https://github.com/qbicsoftware/sample-status-reporter/releases)
-![Groovy Language](https://img.shields.io/badge/language-groovy-blue.svg)
+<div align="center">
+
+[![Build Maven Package](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/build_package.yml/badge.svg)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/build_package.yml)
+[![Run Maven Tests](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/run_tests.yml/badge.svg)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/run_tests.yml)
+[![CodeQL](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/codeql-analysis.yml)
+[![release](https://img.shields.io/github/v/release/qbicsoftware/sample-status-reporter?include_prereleases)](https://github.com/qbicsoftware/sample-status-reporter/releases)
+
+![license](https://img.shields.io/github/license/qbicsoftware/spring-boot-rest-service-template)
+![language](https://img.shields.io/badge/language-java-blue.svg)
+![framework](https://img.shields.io/badge/framework-spring-blue.svg)
+
+</div>
 
 ## System setup
 
