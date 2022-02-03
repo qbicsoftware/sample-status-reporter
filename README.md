@@ -1,7 +1,9 @@
-# <p align="center">LIMS Sample Status Reporter</p>
-
-
 <div align="center">
+
+# LIMS Sample Status Reporter
+<i>A command line tool to report LIMS changes to the sample-tracking service</i>.
+
+
 
 [![Build Maven Package](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/build_package.yml/badge.svg)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/build_package.yml)
 [![Run Maven Tests](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/run_tests.yml/badge.svg)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/run_tests.yml)
