@@ -20,7 +20,7 @@
 
 To run the application, first make sure you provide a correct [configuration](#configuration).
 
-Checkout the latest code from `main` and run the Maven goal `spring-boot:run`:
+Checkout the latest code from `main` and run the maven goal `spring-boot:run`:
 
 ```bash
 mvn spring-boot:run [-Dspring-boot.run.arguments=[-hV],[-t=<timePoint>]]
