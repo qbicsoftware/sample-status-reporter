@@ -16,6 +16,30 @@
 
 </div>
 
+## System Integration
+
+[//]: # (TODO what role does this application play in the infrastructure?)
+As updating sample statuses in more then one place can lead to errors and frustration, automation of
+this process is deemed important. The `sample-status-reporter` automates the migration of updated
+sample statuses from an openBis LIMS to the 
+[sample-tracking-service](https://github.com/qbicsoftware/sample-tracking-service).
+
+**Interaction with the sample-tracking-service**
+
+[//]: # (integration with sample tracking service:
+TODO what database tables need to be there/ endpoints of the sample tracking service are interacted with
+TODO how does the sample tracking service configuration impact this app)
+To propagate information to the sample-tracking service, the app queries the following endpoints:
+* `GET /locations`
+* `PUT /samples/{sampleCode}/currentLocation/`
+
+Please see the [sample-tracking-service SwaggerHub](https://app.swaggerhub.com/apis-docs/qbic/sample-tracking/) entry for further detail.
+
+
+[//]: # (integration with the LIMS openBis instance: 
+TODO: how does the openBis model look like?
+TODO: what user needs to be set up/ what sample properties need to be present)
+
 ## How to run
 
 To run the application, first make sure you provide a correct [configuration](#configuration).
