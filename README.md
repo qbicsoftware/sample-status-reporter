@@ -26,19 +26,26 @@ sample statuses from an openBis LIMS to the
 
 **Interaction with the sample-tracking-service**
 
-[//]: # (integration with sample tracking service:
-TODO what database tables need to be there/ endpoints of the sample tracking service are interacted with
-TODO how does the sample tracking service configuration impact this app)
 To propagate information to the sample-tracking service, the app queries the following endpoints:
+
 * `GET /locations`
 * `PUT /samples/{sampleCode}/currentLocation/`
 
-Please see the [sample-tracking-service SwaggerHub](https://app.swaggerhub.com/apis-docs/qbic/sample-tracking/) entry for further detail.
+Please see
+the [sample-tracking-service SwaggerHub](https://app.swaggerhub.com/apis-docs/qbic/sample-tracking/)
+entry for further detail.
 
+**Integration with the openBIS LIMS**
 
-[//]: # (integration with the LIMS openBis instance: 
-TODO: how does the openBis model look like?
-TODO: what user needs to be set up/ what sample properties need to be present)
+The sample information is retrieved automatically from an openBIS instance acting as LIMS. The
+configuration of the openBIS needs to make sure each sample proviedes the following properties:
+
+* `QBIC_BARCODE` containing `Q`
+* `SAMPLE_STATUS` containing values
+  from `[SAMPLE_RECEIVED, QC_PASSED, QC_FAILED, LIBRARY_PREP_FINISHED]`.
+
+This tool acts in the role of a user configured by you. Please make sure, that the configured user
+only sees projects where you want to propagate the status to the sample-tracking system.
 
 ## How to run
 
