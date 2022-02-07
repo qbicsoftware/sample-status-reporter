@@ -18,7 +18,6 @@
 
 ## System Integration
 
-[//]: # (TODO what role does this application play in the infrastructure?)
 As updating sample statuses in more then one place can lead to errors and frustration, automation of
 this process is deemed important. The `sample-status-reporter` automates the migration of updated
 sample statuses from an openBis LIMS to the 
