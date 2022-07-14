@@ -26,15 +26,12 @@ class QbicSampleStatusReporter implements SampleStatusReporter {
 
     @Override
     void reportSampleStatusUpdate(SampleUpdate sampleUpdate) {
-        Location currentLocation = locationService.getCurrentLocation().orElseThrow({
-            new RuntimeException("No current location could be determined.")
+        Location currentLocation = locationService.getUpdatingPersonLocation().orElseThrow({
+            new RuntimeException("No current location could be determined for the provided user.")
         })
         String sampleCode = sampleUpdate.getSample().getSampleCode()
         String status = sampleUpdate.getUpdatedStatus()
         Instant updateTimepoint = sampleUpdate.getModificationDate()
-        Person responsiblePerson = locationService.getResponsiblePerson().orElseThrow({
-            new RuntimeException("No responsible person for the update was determined.")
-        })
-        sampleTrackingService.updateSampleLocation(sampleCode, currentLocation, status, updateTimepoint, responsiblePerson)
+        sampleTrackingService.updateSampleLocation(sampleCode, currentLocation, status, updateTimepoint)
     }
 }

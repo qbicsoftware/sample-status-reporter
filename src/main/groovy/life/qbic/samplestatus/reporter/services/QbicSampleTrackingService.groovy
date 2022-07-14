@@ -58,8 +58,18 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     @Override
+    @Deprecated
     void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp, Person responsiblePerson) throws SampleUpdateException {
         String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, responsiblePerson, timestamp)
+        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
+        if (response.statusCode() != 200) {
+            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.headers()}: ${response.body()}")
+        }
+    }
+
+    @Override
+    void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp) throws SampleUpdateException {
+        String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, timestamp)
         HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
         if (response.statusCode() != 200) {
             throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.headers()}: ${response.body()}")
