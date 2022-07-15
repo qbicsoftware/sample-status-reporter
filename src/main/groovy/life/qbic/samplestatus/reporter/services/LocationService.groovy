@@ -13,14 +13,9 @@ import life.qbic.samplestatus.reporter.api.Person
 interface LocationService {
 
     /**
-     * Provides the current location
-     * @return the current location if any could be determined
+     * Provides the location of the user running the service, if one is known
+     * @return the location if any could be determined
      */
-    Optional<Location> getCurrentLocation()
+    Optional<Location> getUpdatingPersonLocation()
 
-    /**
-     * Provides the responsible users for the current location
-     * @return user details of the responsible users
-     */
-    Optional<Person> getResponsiblePerson()
 }

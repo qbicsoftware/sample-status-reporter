@@ -58,16 +58,6 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     @Override
-    @Deprecated
-    void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp, Person responsiblePerson) throws SampleUpdateException {
-        String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, responsiblePerson, timestamp)
-        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
-        if (response.statusCode() != 200) {
-            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.headers()}: ${response.body()}")
-        }
-    }
-
-    @Override
     void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp) throws SampleUpdateException {
         String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, timestamp)
         HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
@@ -130,8 +120,8 @@ class QbicSampleTrackingService implements SampleTrackingService {
             return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst()
         }
 
-        protected static String createJsonFromLocationWithStatus(Location location, String status, Person responsiblePerson, Instant arrivalTime) {
-            Map locationMap = convertLocationToMap(location, responsiblePerson)
+        protected static String createJsonFromLocationWithStatus(Location location, String status, Instant arrivalTime) {
+            Map locationMap = convertLocationToMap(location)
             locationMap.put("arrival_date", mapToLocationDateTimeString(arrivalTime))
             locationMap.put("sample_status", status)
             return JsonOutput.toJson(locationMap)
@@ -183,11 +173,11 @@ class QbicSampleTrackingService implements SampleTrackingService {
          * @param location
          * @return a map representing the location
          */
-        private static Map<String, ?> convertLocationToMap(Location location, Person responsiblePerson) {
+        private static Map<String, ?> convertLocationToMap(Location location) {
             Map locationMap = [
                     "name": location.getLabel(),
-                    "responsible_person": responsiblePerson.getFirstName() + " " + responsiblePerson.getLastName(),
-                    "responsible_person_email": responsiblePerson.getEmail(),
+                    "responsible_person": location.getContactPerson(),
+                    "responsible_person_email": location.getContactEmail(),
                     "address": convertAddressToMap(location.getAddress())
             ]
             return locationMap

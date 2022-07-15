@@ -29,20 +29,6 @@ interface SampleTrackingService {
      * @param location the new location with a sample status already set
      * @param status sample status to be set
      * @param timestamp time of the update
-     * @param responsiblePerson responsible person to be used for location
-     * @throws SampleUpdateException in case the sample update was unsuccessful
-     * @since 1.0.0
-     */
-    @Deprecated
-    void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp, Person responsiblePerson) throws SampleUpdateException
-
-    /**
-     * Updates a sample to a given location with a status set in the location.
-     * This information is stored on the persistence layer.
-     * @param sampleCode the code of the sample changing status or location
-     * @param location the new location with a sample status already set
-     * @param status sample status to be set
-     * @param timestamp time of the update
      * @throws SampleUpdateException in case the sample update was unsuccessful
      * @since 1.0.0
      */
