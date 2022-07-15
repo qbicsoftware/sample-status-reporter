@@ -5,7 +5,7 @@ package life.qbic.samplestatus.reporter.api
  *
  * <p>Provides the current location of the configured LIMS.</p>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 interface LocationService {
 

@@ -20,7 +20,7 @@ interface SampleTrackingService {
      * @return the location that this user is associated with
      * @since 1.0.0
      */
-     Optional<Location> getLocationForUser(String userId)
+    Optional<Location> getLocationForUser(String userId)
 
     /**
      * Updates a sample to a given location with a status set in the location.
@@ -33,4 +33,5 @@ interface SampleTrackingService {
      * @since 1.0.0
      */
     void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp) throws SampleUpdateException
+
 }

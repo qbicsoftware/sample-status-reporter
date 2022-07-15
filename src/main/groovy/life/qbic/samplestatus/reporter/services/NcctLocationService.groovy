@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component
 /**
  * <b><short description></b>
  *
- * <p><detailed description></p>
+ * <p>Provides the current location of the configured LIMS. In this case the LIMS for the NCCT.</p>
  *
- * @since <version tag>
+ * @since 1.0.0
  */
 @Component
 @ConfigurationProperties

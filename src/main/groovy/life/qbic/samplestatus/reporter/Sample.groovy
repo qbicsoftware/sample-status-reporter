@@ -5,19 +5,19 @@ import groovy.transform.EqualsAndHashCode
 /**
  * <b>Value Class Sample</b>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @EqualsAndHashCode
 class Sample {
 
-    String sampleCode
+  String sampleCode
 
-    Sample(String sampleCode) {
-        this.sampleCode = sampleCode
-    }
+  Sample(String sampleCode) {
+    this.sampleCode = sampleCode
+  }
 
-    @Override
-    String toString() {
-        return "$sampleCode"
-    }
+  @Override
+  String toString() {
+    return "$sampleCode"
+  }
 }

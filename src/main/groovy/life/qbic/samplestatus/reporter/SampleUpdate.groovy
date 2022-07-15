@@ -7,16 +7,16 @@ import java.time.Instant
 /**
  * <b>Value Class SampleUpdate</b>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @EqualsAndHashCode
 class SampleUpdate {
-    Sample sample
-    String updatedStatus
-    Instant modificationDate
+  Sample sample
+  String updatedStatus
+  Instant modificationDate
 
-    @Override
-    String toString() {
-        return "{$sample, $updatedStatus, $modificationDate}"
-    }
+  @Override
+  String toString() {
+    return "{$sample, $updatedStatus, $modificationDate}"
+  }
 }

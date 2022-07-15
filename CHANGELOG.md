@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 * Remove unnecessary connection to user database and use location service instead to determine user for sample updates
 
-## 1.0.0 (2021-12-15)
+## 1.0.0 (2022-01-28)
 
 * Add first working implementation to report updates based on a point in time.
 * The application fails when any problems arise retrieving samples 

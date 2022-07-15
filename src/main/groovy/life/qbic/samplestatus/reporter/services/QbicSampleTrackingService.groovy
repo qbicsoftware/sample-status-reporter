@@ -21,11 +21,10 @@ import java.time.format.DateTimeFormatter
 import static java.time.ZoneOffset.UTC
 
 /**
- * <class short description - 1 Line!>
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * This service provides fundamental access to sample-tracking persistence. It allows to retrieve information and stores information in the system.
  *
- * @since <version tag>
+ * @since 1.0.0
  */
 @Component
 @ConfigurationProperties
@@ -55,15 +54,6 @@ class QbicSampleTrackingService implements SampleTrackingService {
         URI requestURI = createUserLocationURI(userId)
         HttpResponse response = requestLocation(requestURI)
         return Optional.of(response.body()).flatMap(DtoMapper::parseLocationOfJson)
-    }
-
-    @Override
-    void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp) throws SampleUpdateException {
-        String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, timestamp)
-        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
-        if (response.statusCode() != 200) {
-            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.headers()}: ${response.body()}")
-        }
     }
 
     private HttpResponse<String> requestSampleUpdate(URI requestURI, String locationJson) {
@@ -102,6 +92,15 @@ class QbicSampleTrackingService implements SampleTrackingService {
         }
     }
 
+    @Override
+    void updateSampleLocation(String sampleCode, Location location, String status, Instant timestamp) throws SampleUpdateException {
+        String locationJson = DtoMapper.createJsonFromLocationWithStatus(location, status, timestamp)
+        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), locationJson)
+        if (response.statusCode() != 200) {
+            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.headers()}: ${response.body()}")
+        }
+    }
+
     private static class DtoMapper {
 
         private static final LOCATION_NAME = "name"
@@ -116,7 +115,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
         protected static Optional<Location> parseLocationOfJson(String putativeLocationJson) {
             println putativeLocationJson
 
-            List<Map> locationMaps = parseJsonToList(putativeLocationJson )
+            List<Map> locationMaps = parseJsonToList(putativeLocationJson)
             return locationMaps.stream().map(DtoMapper::convertMapToLocation).findFirst()
         }
 
@@ -174,12 +173,10 @@ class QbicSampleTrackingService implements SampleTrackingService {
          * @return a map representing the location
          */
         private static Map<String, ?> convertLocationToMap(Location location) {
-            Map locationMap = [
-                    "name": location.getLabel(),
-                    "responsible_person": location.getContactPerson(),
-                    "responsible_person_email": location.getContactEmail(),
-                    "address": convertAddressToMap(location.getAddress())
-            ]
+            Map locationMap = ["name"                    : location.getLabel(),
+                               "responsible_person"      : location.getContactPerson(),
+                               "responsible_person_email": location.getContactEmail(),
+                               "address"                 : convertAddressToMap(location.getAddress())]
             return locationMap
         }
 
@@ -196,13 +193,12 @@ class QbicSampleTrackingService implements SampleTrackingService {
          * @return a map containing information about the address provided
          */
         private static Map<String, String> convertAddressToMap(Address address) {
-            Map addressMap = [
-                    "affiliation": address.getAffiliation(),
-                    "street": address.getStreet(),
-                    "zip_code": address.getZipCode(),
-                    "country": address.getCountry()
-            ]
+            Map addressMap = ["affiliation": address.getAffiliation(),
+                              "street"     : address.getStreet(),
+                              "zip_code"   : address.getZipCode(),
+                              "country"    : address.getCountry()]
             return addressMap
         }
+
     }
 }

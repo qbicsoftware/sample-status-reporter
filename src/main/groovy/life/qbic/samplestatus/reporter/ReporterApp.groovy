@@ -17,34 +17,34 @@ import picocli.CommandLine
  *
  * <p>The entry-point of the reporter application.</p>
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @SpringBootApplication
 class ReporterApp implements CommandLineRunner {
 
-    private static final Logger log = LoggerFactory.getLogger(ReporterApp.class)
+  private static final Logger log = LoggerFactory.getLogger(ReporterApp.class)
 
-    @Autowired
-    ApplicationContext applicationContext
+  @Autowired
+  ApplicationContext applicationContext
 
-    static void main(String[] args) {
-        SpringApplication.run(ReporterApp.class, args)
+  static void main(String[] args) {
+    SpringApplication.run(ReporterApp.class, args)
+  }
+
+  @Override
+  void run(String... args) throws Exception {
+    UpdateSearchService updateSearchService = applicationContext.getBean("lastUpdateSearch")
+    LimsQueryService limsQueryService = applicationContext.getBean("realLimsQueryService")
+    SampleStatusReporter statusReporter = applicationContext.getBean("qbicSampleStatusReporter")
+
+    ReportSinceInstant reportSinceInstant = new ReportSinceInstant(limsQueryService, statusReporter, updateSearchService)
+
+    int exitCode = 1
+    try {
+      exitCode = new CommandLine(reportSinceInstant).execute(args)
+    } catch (Exception e) {
+      log.error(e.getMessage(), e)
     }
-
-    @Override
-    void run(String... args) throws Exception {
-        UpdateSearchService updateSearchService = applicationContext.getBean("lastUpdateSearch")
-        LimsQueryService limsQueryService = applicationContext.getBean("realLimsQueryService")
-        SampleStatusReporter statusReporter = applicationContext.getBean("qbicSampleStatusReporter")
-
-        ReportSinceInstant reportSinceInstant = new ReportSinceInstant(limsQueryService, statusReporter, updateSearchService)
-
-        int exitCode = 1
-        try {
-            exitCode = new CommandLine(reportSinceInstant).execute(args)
-        } catch (Exception e) {
-            log.error(e.getMessage(), e)
-        }
-        System.exit(exitCode)
-    }
+    System.exit(exitCode)
+  }
 }

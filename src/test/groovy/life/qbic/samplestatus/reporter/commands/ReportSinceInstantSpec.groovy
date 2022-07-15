@@ -33,7 +33,7 @@ class ReportSinceInstantSpec extends Specification {
 
     given: "#n exceptions during sample update retrieval"
     List<Result<SampleUpdate, Exception>> updates = []
-    for (i in 0..< n) {
+    for (i in 0..<n) {
       updates.add(Result.of(new RuntimeException("test exception $i")))
     }
     // add one valid update
@@ -63,7 +63,7 @@ class ReportSinceInstantSpec extends Specification {
   def "given #n random sample updates, when the reporter is run, then all sample updates are triggered in the reporter"() {
     given: "#n random sample updates"
     List<Result<SampleUpdate, Exception>> updates = []
-    for (i in 0..< n) {
+    for (i in 0..<n) {
       Sample sample = new Sample(generateFakeSampleCode())
       SampleUpdate sampleUpdate = new SampleUpdate()
       sampleUpdate.setUpdatedStatus("DATA_AVAILABLE")

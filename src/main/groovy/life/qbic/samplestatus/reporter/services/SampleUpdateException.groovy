@@ -6,7 +6,7 @@ package life.qbic.samplestatus.reporter.services
  * @since 1.0.0
  */
 class SampleUpdateException extends RuntimeException {
-    SampleUpdateException(String message) {
-        super(message)
-    }
+  SampleUpdateException(String message) {
+    super(message)
+  }
 }

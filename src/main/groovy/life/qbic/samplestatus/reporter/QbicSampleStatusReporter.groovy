@@ -22,8 +22,6 @@ class QbicSampleStatusReporter implements SampleStatusReporter {
     @Autowired
     private LocationService locationService
 
-
-
     @Override
     void reportSampleStatusUpdate(SampleUpdate sampleUpdate) {
         Location currentLocation = locationService.getUpdatingPersonLocation().orElseThrow({
@@ -34,4 +32,5 @@ class QbicSampleStatusReporter implements SampleStatusReporter {
         Instant updateTimepoint = sampleUpdate.getModificationDate()
         sampleTrackingService.updateSampleLocation(sampleCode, currentLocation, status, updateTimepoint)
     }
+
 }
