@@ -18,6 +18,6 @@ interface LocationService {
      * Must not be thrown, if the internal query was successful but no matching location was found. Instead, return an {@link Optional#empty}.
      * @since 0.1.0
      */
-    Optional<Location> getUpdatingPersonLocation() throws ServiceException
+    Optional<Location> getUpdatingPersonLocation()
 
 }
