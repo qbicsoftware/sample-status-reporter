@@ -36,7 +36,7 @@ entry for further detail.
 **Integration with the openBIS LIMS**
 
 The sample information is retrieved automatically from an openBIS instance acting as LIMS. The
-configuration of the openBIS needs to make sure each sample provides a QBiC barcode (containin `Q`) and a sample status.
+configuration of the openBIS needs to make sure each sample provides a QBiC barcode (containing `Q`) and a sample status.
 Furthermore, the names of the properties providing this information needs to be provided (see [Environment Variables](#environment-variables)).
 
 * The sample status may contain values
