@@ -57,7 +57,7 @@ class SampleStatusMapper implements Function<String, Result<String, Exception>> 
     }
     return SampleStatus.fromLimsStatus(statusString)
             .map(it -> Result.of(it.qbicStatus))
-            .orElseGet(() -> Result.of(new MappingException("Cannot map unkown satus value: $statusString.")))
+            .orElseGet(() -> Result.of(new MappingException("Cannot map unknown status value: $statusString.")))
   }
 
   /**
