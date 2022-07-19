@@ -82,6 +82,7 @@ class ReportSinceInstant implements Runnable {
       updatedSamples.stream()
               .filter(Result::isOk)
               .map(Result::getValue)
+              .sorted((SampleUpdate su1, SampleUpdate su2) -> su1.getModificationDate().compareTo(su2.getModificationDate()))
               .peek(it -> log.info("\tUpdating $it"))
               .forEach(statusReporter::reportSampleStatusUpdate)
       log.info("Finished processing.")
