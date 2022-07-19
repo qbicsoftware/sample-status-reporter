@@ -128,7 +128,7 @@ class RealLimsQueryService implements LimsQueryService {
 
     switch (updatedStatus) {
       case { it.isOk() }: return Result.of(new SampleUpdate(sample: sample, updatedStatus: updatedStatus.getValue(), modificationDate: modificationDate.toInstant())); break
-      case { it.isError() }: return Result.of(updatedStatus.getError()); break
+      case { it.isError() }: return Result.of(new RuntimeException("$sampleBarcode => ${updatedStatus.getError().getMessage()}", updatedStatus.getError())); break
       default: throw new RuntimeException("Result neither Ok nor Error. This is not expected!")
     }
   }
