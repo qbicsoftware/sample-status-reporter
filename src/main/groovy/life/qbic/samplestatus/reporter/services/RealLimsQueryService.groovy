@@ -75,7 +75,9 @@ class RealLimsQueryService implements LimsQueryService {
     }
   }
   /**
-   * {@InheritDocs}
+   * {@inheritDoc}
+   * @param  updatedSince {@inheritDoc}
+   * @return {@inheritDoc}
    */
   @Override
   List<Result<SampleUpdate, Exception>> getUpdatedSamples(Instant updatedSince) {
