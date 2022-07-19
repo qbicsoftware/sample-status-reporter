@@ -52,6 +52,9 @@ class SampleStatusMapper implements Function<String, Result<String, Exception>> 
   }
 
   private Result<String, Exception> mapSampleStatus(String statusString) {
+    if (statusString == null) {
+      return Result.of(new MappingException("Status value is null."))
+    }
     if (statusString.isEmpty()) {
       return Result.of(new MappingException("Status value is empty."))
     }
