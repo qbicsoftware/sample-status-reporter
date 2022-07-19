@@ -38,6 +38,8 @@ class RealLimsQueryService implements LimsQueryService {
 
   private final String sampleStatusProperty
 
+  private SampleStatusMapper statusMapper
+
 
   /**
    * <b>Main configuration constructor</b>
@@ -75,6 +77,7 @@ class RealLimsQueryService implements LimsQueryService {
     if (sampleStatusProperty.isEmpty()) {
       throw new IllegalArgumentException("Provided sample status property '$sampleStatusProperty' must not be empty.")
     }
+    statusMapper = new SampleStatusMapper()
   }
 
   /**
@@ -109,10 +112,17 @@ class RealLimsQueryService implements LimsQueryService {
     SearchResult<Sample> result = openBisApplicationServerApi.searchSamples(sessionToken, criteria, fetchOptions)
     List<Result<SampleUpdate, Exception>> sampleUpdates =
             result.getObjects().stream()
+                    .filter(it -> !this.hasIgnoredLimsStatus(it))
                     .map(this::createSampleUpdate)
                     .collect()
 
     return sampleUpdates
+  }
+
+  private boolean hasIgnoredLimsStatus(Sample sample) {
+    Map<String, String> properties = sample.getProperties()
+    String sampleStatus = properties.get(sampleStatusProperty)
+    return statusMapper.isIgnoredLimsStatus(sampleStatus)
   }
 
   private Result<SampleUpdate, Exception> createSampleUpdate(Sample limsSample) {
@@ -124,7 +134,7 @@ class RealLimsQueryService implements LimsQueryService {
     life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleBarcode)
 
     Date modificationDate = limsSample.getModificationDate()
-    Result<String, Exception> updatedStatus = new SampleStatusMapper().apply(properties.get(sampleStatusProperty))
+    Result<String, Exception> updatedStatus = statusMapper.limsToQbicStatus(properties.get(sampleStatusProperty))
 
     switch (updatedStatus) {
       case { it.isOk() }: return Result.of(new SampleUpdate(sample: sample, updatedStatus: updatedStatus.getValue(), modificationDate: modificationDate.toInstant())); break
@@ -133,11 +143,11 @@ class RealLimsQueryService implements LimsQueryService {
     }
   }
 
-  /**
-   * <b>Class AuthenticationException</b>
-   *
-   * <p>Small authentication exception class that can be used to indicate authentication exceptions</p>
-   */
+/**
+ * <b>Class AuthenticationException</b>
+ *
+ * <p>Small authentication exception class that can be used to indicate authentication exceptions</p>
+ */
   class AuthenticationException extends RuntimeException {
 
     AuthenticationException(String message) {
