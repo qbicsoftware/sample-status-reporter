@@ -1,9 +1,8 @@
 <div align="center">
 
 # LIMS Sample Status Reporter
+
 <i>A command line tool to report LIMS changes to the sample-tracking service</i>.
-
-
 
 [![Build Maven Package](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/build_package.yml/badge.svg)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/build_package.yml)
 [![Run Maven Tests](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/run_tests.yml/badge.svg)](https://github.com/qbicsoftware/sample-status-reporter/actions/workflows/run_tests.yml)
@@ -20,7 +19,7 @@
 
 As updating sample statuses in more then one place can lead to errors and frustration, automation of
 this process is deemed important. The `sample-status-reporter` automates the migration of updated
-sample statuses from an openBis LIMS to the 
+sample statuses from an openBis LIMS to the
 [sample-tracking-service](https://github.com/qbicsoftware/sample-tracking-service).
 
 **Interaction with the sample-tracking-service**
@@ -37,10 +36,10 @@ entry for further detail.
 **Integration with the openBIS LIMS**
 
 The sample information is retrieved automatically from an openBIS instance acting as LIMS. The
-configuration of the openBIS needs to make sure each sample proviedes the following properties:
+configuration of the openBIS needs to make sure each sample provides a QBiC barcode (containin `Q`) and a sample status.
+Furthermore, the names of the properties providing this information needs to be provided (see [Environment Variables](#environment-variables)).
 
-* `QBIC_BARCODE` containing `Q`
-* `SAMPLE_STATUS` containing values
+* The sample status may contain values
   from `[SAMPLE_RECEIVED, QC_PASSED, QC_FAILED, LIBRARY_PREP_FINISHED]`.
 
 This tool acts in the role of a user configured by you. Please make sure, that the configured user
@@ -97,22 +96,21 @@ Please note that this project requires `java 17`.
 
 For this application to be run the following environment variables need to be set:
 
-| Environment Variable                | Description                                                            | Default Value                          |
-|-------------------------------------|------------------------------------------------------------------------|----------------------------------------|
-| `LAST_UPDATE_FILE`                  | A path to a persistent file. The last successful run is stored here.   | `last-updated.txt `                    |
-| `LIMS_PASSWORD`                     | The password to access the OpenBiS LIMS                                |                                        |
-| `LIMS_SERVER_URL`                   | The URL to the OpenBiS LIMS API                                        |                                        |
-| `LIMS_USER`                         | The user to access the OpenBiS LIMS                                    |                                        |
-| `SAMPLE_TRACKING_AUTH_PASSWORD`     | The password for the sample tracking user                              | `astrongpassphrase! `                  |
-| `SAMPLE_TRACKING_AUTH_USER`         | The username for the sample tracking service                           | `qbic`                                 |
-| `SAMPLE_TRACKING_LOCATION_ENDPOINT` | The endpoint to list all locations. This does not contain the base url | `/locations`                           |
-| `SAMPLE_TRACKING_LOCATION_USER`     | The sample tracking user currently using the application               | `my_email@example.com`                 |
-| `SAMPLE_TRACKING_URL`               | The base URL for the sample tracking service                           | `http://localhost.de`                  |
-| `USER_DB_DIALECT`                   | The database dialect of the user database                              | `org.hibernate.dialect.MariaDBDialect` |
-| `USER_DB_DRIVER`                    | The database driver for the user database                              | `com.mysql.cj.jdbc.Driver`             |
-| `USER_DB_HOST`                      | The URL to the host of the user database containing the database name  | `localhost`                            |
-| `USER_DB_USER_NAME`                 | The database user name                                                 | `myusername`                           |
-| `USER_DB_USER_PW`                   | The database user password                                             | ` astrongpassphrase!`                  |
-
-
-
+| Environment Variable                | Description                                                                                   | Default Value                          |
+|-------------------------------------|-----------------------------------------------------------------------------------------------|----------------------------------------|
+| `LAST_UPDATE_FILE`                  | A path to a persistent file. The last successful run is stored here.                          | `last-updated.txt `                    |
+| `LIMS_PASSWORD`                     | The password to access the OpenBiS LIMS                                                       |                                        |
+| `LIMS_SERVER_URL`                   | The URL to the OpenBiS LIMS API                                                               |                                        |
+| `LIMS_USER`                         | The user to access the OpenBiS LIMS                                                           |                                        |
+| `LIMS_BARCODE_PROPERTY`             | The name of the property in the OpenBiS LIMS from which to read the QBiC barcode              |                                        |
+| `LIMS_STATUS_PROPERTY`              | The name of the property in the OpenBis LIMS from which to read the sample status information |                                        |
+| `SAMPLE_TRACKING_AUTH_PASSWORD`     | The password for the sample tracking user                                                     | `astrongpassphrase! `                  |
+| `SAMPLE_TRACKING_AUTH_USER`         | The username for the sample tracking service                                                  | `qbic`                                 |
+| `SAMPLE_TRACKING_LOCATION_ENDPOINT` | The endpoint to list all locations. This does not contain the base url                        | `/locations`                           |
+| `SAMPLE_TRACKING_LOCATION_USER`     | The sample tracking user currently using the application                                      | `my_email@example.com`                 |
+| `SAMPLE_TRACKING_URL`               | The base URL for the sample tracking service                                                  | `http://localhost.de`                  |
+| `USER_DB_DIALECT`                   | The database dialect of the user database                                                     | `org.hibernate.dialect.MariaDBDialect` |
+| `USER_DB_DRIVER`                    | The database driver for the user database                                                     | `com.mysql.cj.jdbc.Driver`             |
+| `USER_DB_HOST`                      | The URL to the host of the user database containing the database name                         | `localhost`                            |
+| `USER_DB_USER_NAME`                 | The database user name                                                                        | `myusername`                           |
+| `USER_DB_USER_PW`                   | The database user password                                                                    | ` astrongpassphrase!`                  |
