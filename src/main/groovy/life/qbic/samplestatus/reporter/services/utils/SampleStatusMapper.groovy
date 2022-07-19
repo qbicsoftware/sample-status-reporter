@@ -40,13 +40,21 @@ class SampleStatusMapper {
     }
   }
 
-
+ /**
+ * @param status the lims status to be checked
+ * @return true if the status is marked as ignored; false otherwise
+ */
   public static boolean isIgnoredLimsStatus(String status) {
     return KnownSampleStatus.fromLimsStatus(status)
             .map(KnownSampleStatus::isIgnored)
             .orElse(false)
   }
 
+  /**
+   * Maps lims to qbic sample status
+   * @param limsStatus
+   * @return a result containing the mapped value or the exception that occurred.
+   */
   public Result<String, Exception> limsToQbicStatus(String limsStatus) {
     mapSampleStatus(limsStatus)
   }
@@ -65,8 +73,7 @@ class SampleStatusMapper {
 
   /**
    * <b>Class MappingException</b>
-   * <p>Small mapping exception class that can be used when sample status mapping fails</p>
-   */
+   * <p>Small mapping exception class that can be used when sample status mapping fails</p>*/
   class MappingException extends RuntimeException {
 
     MappingException(String message) {
