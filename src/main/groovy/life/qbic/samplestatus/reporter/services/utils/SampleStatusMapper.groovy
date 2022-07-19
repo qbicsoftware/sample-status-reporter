@@ -13,10 +13,33 @@ import java.util.function.Function
  */
 class SampleStatusMapper implements Function<String, Result<String, Exception>> {
 
-  private static final String SAMPLE_RECEIVED = "SAMPLE_RECEIVED"
-  private static final String SAMPLE_QC_PASS = "SAMPLE_QC_PASS"
-  private static final String SAMPLE_QC_FAIL = "SAMPLE_QC_FAIL"
-  private static final String LIBRARY_PREP_FINISHED = "LIBRARY_PREP_FINISHED"
+  enum SampleStatus {
+    SAMPLE_RECEIVED("Sample received", "SAMPLE_RECEIVED"),
+    SAMPLE_QC_PASSED("QC passed", "SAMPLE_QC_PASS"),
+    SAMPLE_QC_FAILED("QC failed", "SAMPLE_QC_FAIL"),
+    LIBRARY_PREP_FINISHED("Library completed", "LIBRARY_PREP_FINISHED")
+
+
+    private final String limsStatus
+    private final String qbicStatus
+
+    private SampleStatus(String limsStatus, String qbicStatus) {
+      this.limsStatus = limsStatus
+      this.qbicStatus = qbicStatus
+    }
+
+    static Optional<SampleStatus> fromLimsStatus(String status) {
+      return Arrays.stream(values())
+              .filter(it -> it.limsStatus.equals(status))
+              .findFirst()
+    }
+
+    static Optional<SampleStatus> fromQbicStatus(String status) {
+      return Arrays.stream(values())
+              .filter(it -> it.qbicStatus.equals(status))
+              .findFirst()
+    }
+  }
 
   /**
    * <p>Tries to map a String value to a known sample status.</p>
@@ -29,23 +52,15 @@ class SampleStatusMapper implements Function<String, Result<String, Exception>> 
   }
 
   private Result<String, Exception> mapSampleStatus(String statusString) {
+    if (statusString == null) {
+      return Result.of(new MappingException("Status value is null."))
+    }
     if (statusString.isEmpty()) {
       return Result.of(new MappingException("Status value is empty."))
     }
-    Result<String, Exception> result
-    switch (statusString) {
-      case "SAMPLE_RECEIVED":
-        result = Result.of(SAMPLE_RECEIVED); break
-      case "QC_PASSED":
-        result = Result.of(SAMPLE_QC_PASS); break
-      case "QC_FAILED":
-        result = Result.of(SAMPLE_QC_FAIL); break
-      case "LIBRARY_PREP_FINISHED":
-        result = Result.of(LIBRARY_PREP_FINISHED); break
-      default:
-        result = Result.of(new MappingException("Cannot map unkown satus value: $statusString."))
-    }
-    return result
+    return SampleStatus.fromLimsStatus(statusString)
+            .map(it -> Result.of(it.qbicStatus))
+            .orElseGet(() -> Result.of(new MappingException("Cannot map unknown status value: $statusString.")))
   }
 
   /**
@@ -59,5 +74,3 @@ class SampleStatusMapper implements Function<String, Result<String, Exception>> 
     }
   }
 }
-
-

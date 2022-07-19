@@ -28,7 +28,8 @@ class LastUpdateSearch implements UpdateSearchService {
   }
 
   /**
-   * @inheritDocs
+   * {@inheritDoc}
+   * @return {@inheritDoc}
    */
   @Override
   Optional<Instant> getLastUpdateSearchTimePoint() {
@@ -36,7 +37,8 @@ class LastUpdateSearch implements UpdateSearchService {
   }
 
   /**
-   * @inheritDocs
+   * {@inheritDoc}
+   * @param lastSearchTimePoint {@inheritDoc}
    */
   @Override
   void saveLastSearchTimePoint(Instant lastSearchTimePoint) {
