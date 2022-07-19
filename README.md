@@ -40,7 +40,7 @@ configuration of the openBIS needs to make sure each sample provides a QBiC barc
 Furthermore, the names of the properties providing this information needs to be provided (see [Environment Variables](#environment-variables)).
 
 * The sample status may contain values
-  from `[SAMPLE_RECEIVED, QC_PASSED, QC_FAILED, LIBRARY_PREP_FINISHED]`.
+  from `["Sample received", "QC passed", "QC failed", "Library completed"]`.
 
 This tool acts in the role of a user configured by you. Please make sure, that the configured user
 only sees projects where you want to propagate the status to the sample-tracking system.
