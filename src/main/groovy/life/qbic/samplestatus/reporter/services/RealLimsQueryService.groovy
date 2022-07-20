@@ -11,11 +11,12 @@ import life.qbic.samplestatus.reporter.SampleUpdate
 import life.qbic.samplestatus.reporter.api.LimsQueryService
 import life.qbic.samplestatus.reporter.services.utils.SampleStatusMapper
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 import java.time.Instant
+
+import static java.util.Objects.requireNonNull
 
 /**
  * <b>Class RealLimsQueryService</b>
@@ -27,7 +28,6 @@ import java.time.Instant
  * @since 1.0.0
  */
 @Component
-@ConfigurationProperties
 class RealLimsQueryService implements LimsQueryService {
 
   private IApplicationServerApi openBisApplicationServerApi
@@ -37,6 +37,10 @@ class RealLimsQueryService implements LimsQueryService {
   private final String qbicBarcodeProperty
 
   private final String sampleStatusProperty
+
+  private SampleStatusMapper statusMapper
+
+  private List<String> ignoredStatusValues
 
 
   /**
@@ -62,19 +66,22 @@ class RealLimsQueryService implements LimsQueryService {
                        @Value('${service.openbis.lims.server.api.url}') String applicationServerUrl,
                        @Value('${service.openbis.lims.sampleinformation.status}') String sampleStatusProperty,
                        @Value('${service.openbis.lims.sampleinformation.barcode}') String qbicBarcodeProperty,
+                       @Value('${service.openbis.lims.sampleinformation.status.ignored}') List<String> ignoredStatuses,
                        @Value('${service.openbis.server.timeout}') Integer serverTimeout) {
     this.openBisApplicationServerApi = HttpInvokerUtils.createServiceStub(
             IApplicationServerApi.class,
             applicationServerUrl + IApplicationServerApi.SERVICE_URL, serverTimeout)
     sessionToken = this.openBisApplicationServerApi.login(openbisUser, openbisPassword)
-    this.qbicBarcodeProperty = Objects.requireNonNull(qbicBarcodeProperty)
-    this.sampleStatusProperty = Objects.requireNonNull(sampleStatusProperty)
+    this.qbicBarcodeProperty = requireNonNull(qbicBarcodeProperty)
+    this.sampleStatusProperty = requireNonNull(sampleStatusProperty)
+    this.ignoredStatusValues = requireNonNull(ignoredStatuses)
     if (qbicBarcodeProperty.isEmpty()) {
       throw new IllegalArgumentException("Provided barcode property '$qbicBarcodeProperty' must not be empty.")
     }
     if (sampleStatusProperty.isEmpty()) {
       throw new IllegalArgumentException("Provided sample status property '$sampleStatusProperty' must not be empty.")
     }
+    statusMapper = new SampleStatusMapper()
   }
 
   /**
@@ -109,10 +116,17 @@ class RealLimsQueryService implements LimsQueryService {
     SearchResult<Sample> result = openBisApplicationServerApi.searchSamples(sessionToken, criteria, fetchOptions)
     List<Result<SampleUpdate, Exception>> sampleUpdates =
             result.getObjects().stream()
+                    .filter(it -> !this.hasIgnoredLimsStatus(it))
                     .map(this::createSampleUpdate)
                     .collect()
 
     return sampleUpdates
+  }
+
+  private boolean hasIgnoredLimsStatus(Sample sample) {
+    Map<String, String> properties = sample.getProperties()
+    String sampleStatus = properties.get(sampleStatusProperty)
+    return ignoredStatusValues.contains(sampleStatus)
   }
 
   private Result<SampleUpdate, Exception> createSampleUpdate(Sample limsSample) {
@@ -124,7 +138,7 @@ class RealLimsQueryService implements LimsQueryService {
     life.qbic.samplestatus.reporter.Sample sample = new life.qbic.samplestatus.reporter.Sample(sampleBarcode)
 
     Date modificationDate = limsSample.getModificationDate()
-    Result<String, Exception> updatedStatus = new SampleStatusMapper().apply(properties.get(sampleStatusProperty))
+    Result<String, Exception> updatedStatus = statusMapper.limsToQbicStatus(properties.get(sampleStatusProperty))
 
     switch (updatedStatus) {
       case { it.isOk() }: return Result.of(new SampleUpdate(sample: sample, updatedStatus: updatedStatus.getValue(), modificationDate: modificationDate.toInstant())); break
@@ -133,11 +147,11 @@ class RealLimsQueryService implements LimsQueryService {
     }
   }
 
-  /**
-   * <b>Class AuthenticationException</b>
-   *
-   * <p>Small authentication exception class that can be used to indicate authentication exceptions</p>
-   */
+/**
+ * <b>Class AuthenticationException</b>
+ *
+ * <p>Small authentication exception class that can be used to indicate authentication exceptions</p>
+ */
   class AuthenticationException extends RuntimeException {
 
     AuthenticationException(String message) {
