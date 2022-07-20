@@ -12,21 +12,17 @@ import life.qbic.samplestatus.reporter.Result
 class SampleStatusMapper {
 
   enum KnownSampleStatus {
-    SAMPLE_RECEIVED("Sample received", "SAMPLE_RECEIVED", false),
-    SAMPLE_QC_PASSED("QC passed", "SAMPLE_QC_PASS", false),
-    SAMPLE_QC_FAILED("QC failed", "SAMPLE_QC_FAIL", false),
-    LIBRARY_PREP_FINISHED("Library completed", "LIBRARY_PREP_FINISHED", false),
-    SEQUENCING_COMPLETED("Sequencing completed", "", true)
-
+    SAMPLE_RECEIVED("Sample received", "SAMPLE_RECEIVED"),
+    SAMPLE_QC_PASSED("QC passed", "SAMPLE_QC_PASS"),
+    SAMPLE_QC_FAILED("QC failed", "SAMPLE_QC_FAIL"),
+    LIBRARY_PREP_FINISHED("Library completed", "LIBRARY_PREP_FINISHED"),
 
     private final String limsStatus
     private final String qbicStatus
-    private final boolean ignored
 
-    private KnownSampleStatus(String limsStatus, String qbicStatus, boolean ignored) {
+    private KnownSampleStatus(String limsStatus, String qbicStatus) {
       this.limsStatus = limsStatus
       this.qbicStatus = qbicStatus
-      this.ignored = ignored
     }
 
     static Optional<KnownSampleStatus> fromLimsStatus(String status) {
@@ -34,20 +30,6 @@ class SampleStatusMapper {
               .filter(it -> it.limsStatus.equals(status))
               .findFirst()
     }
-
-    private boolean isIgnored() {
-      return ignored
-    }
-  }
-
- /**
- * @param status the lims status to be checked
- * @return true if the status is marked as ignored; false otherwise
- */
-  public static boolean isIgnoredLimsStatus(String status) {
-    return KnownSampleStatus.fromLimsStatus(status)
-            .map(KnownSampleStatus::isIgnored)
-            .orElse(false)
   }
 
   /**

@@ -40,6 +40,8 @@ class RealLimsQueryService implements LimsQueryService {
 
   private SampleStatusMapper statusMapper
 
+  private List<String> ignoredStatusValues = ["Sequencing completed"]
+
 
   /**
    * <b>Main configuration constructor</b>
@@ -122,7 +124,7 @@ class RealLimsQueryService implements LimsQueryService {
   private boolean hasIgnoredLimsStatus(Sample sample) {
     Map<String, String> properties = sample.getProperties()
     String sampleStatus = properties.get(sampleStatusProperty)
-    return statusMapper.isIgnoredLimsStatus(sampleStatus)
+    return ignoredStatusValues.contains(sampleStatus)
   }
 
   private Result<SampleUpdate, Exception> createSampleUpdate(Sample limsSample) {
