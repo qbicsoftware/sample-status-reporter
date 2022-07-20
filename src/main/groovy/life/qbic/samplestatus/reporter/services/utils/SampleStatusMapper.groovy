@@ -11,7 +11,7 @@ import life.qbic.samplestatus.reporter.Result
  */
 class SampleStatusMapper {
 
-  enum KnownSampleStatus {
+  private final enum KnownSampleStatus {
     SAMPLE_RECEIVED("Sample received", "SAMPLE_RECEIVED"),
     SAMPLE_QC_PASSED("QC passed", "SAMPLE_QC_PASS"),
     SAMPLE_QC_FAILED("QC failed", "SAMPLE_QC_FAIL"),
@@ -25,7 +25,7 @@ class SampleStatusMapper {
       this.qbicStatus = qbicStatus
     }
 
-    static Optional<KnownSampleStatus> fromLimsStatus(String status) {
+    private static Optional<KnownSampleStatus> fromLimsStatus(String status) {
       return Arrays.stream(values())
               .filter(it -> it.limsStatus.equals(status))
               .findFirst()
