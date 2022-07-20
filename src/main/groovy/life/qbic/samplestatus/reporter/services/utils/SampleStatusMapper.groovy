@@ -38,7 +38,7 @@ class SampleStatusMapper {
    * @return a result containing the mapped value or the exception that occurred.
    */
   public Result<String, Exception> limsToQbicStatus(String limsStatus) {
-    mapSampleStatus(limsStatus)
+    return mapSampleStatus(limsStatus)
   }
 
   private Result<String, Exception> mapSampleStatus(String statusString) {
