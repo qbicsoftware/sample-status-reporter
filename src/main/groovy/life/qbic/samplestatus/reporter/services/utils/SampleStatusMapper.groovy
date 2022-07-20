@@ -2,8 +2,6 @@ package life.qbic.samplestatus.reporter.services.utils
 
 import life.qbic.samplestatus.reporter.Result
 
-import java.util.function.Function
-
 /**
  * <b>Class SampleStatusMapper<b>
  *
@@ -11,47 +9,53 @@ import java.util.function.Function
  *
  * @since 1.0.0
  */
-class SampleStatusMapper implements Function<String, Result<String, Exception>> {
+class SampleStatusMapper {
 
-  private static final String SAMPLE_RECEIVED = "SAMPLE_RECEIVED"
-  private static final String SAMPLE_QC_PASS = "SAMPLE_QC_PASS"
-  private static final String SAMPLE_QC_FAIL = "SAMPLE_QC_FAIL"
-  private static final String LIBRARY_PREP_FINISHED = "LIBRARY_PREP_FINISHED"
+  private final enum KnownSampleStatus {
+    SAMPLE_RECEIVED("Sample received", "SAMPLE_RECEIVED"),
+    SAMPLE_QC_PASSED("QC passed", "SAMPLE_QC_PASS"),
+    SAMPLE_QC_FAILED("QC failed", "SAMPLE_QC_FAIL"),
+    LIBRARY_PREP_FINISHED("Library completed", "LIBRARY_PREP_FINISHED"),
+
+    private final String limsStatus
+    private final String qbicStatus
+
+    private KnownSampleStatus(String limsStatus, String qbicStatus) {
+      this.limsStatus = limsStatus
+      this.qbicStatus = qbicStatus
+    }
+
+    private static Optional<KnownSampleStatus> fromLimsStatus(String status) {
+      return Arrays.stream(values())
+              .filter(it -> it.limsStatus.equals(status))
+              .findFirst()
+    }
+  }
 
   /**
-   * <p>Tries to map a String value to a known sample status.</p>
-   * @param s the String value you want to have mapped
-   * @return the mapped String value
+   * Maps lims to qbic sample status
+   * @param limsStatus
+   * @return a result containing the mapped value or the exception that occurred.
    */
-  @Override
-  Result<String, Exception> apply(String s) {
-    return mapSampleStatus(s)
+  public Result<String, Exception> limsToQbicStatus(String limsStatus) {
+    return mapSampleStatus(limsStatus)
   }
 
   private Result<String, Exception> mapSampleStatus(String statusString) {
+    if (statusString == null) {
+      return Result.of(new MappingException("Status value is null."))
+    }
     if (statusString.isEmpty()) {
       return Result.of(new MappingException("Status value is empty."))
     }
-    Result<String, Exception> result
-    switch (statusString) {
-      case "SAMPLE_RECEIVED":
-        result = Result.of(SAMPLE_RECEIVED); break
-      case "QC_PASSED":
-        result = Result.of(SAMPLE_QC_PASS); break
-      case "QC_FAILED":
-        result = Result.of(SAMPLE_QC_FAIL); break
-      case "LIBRARY_PREP_FINISHED":
-        result = Result.of(LIBRARY_PREP_FINISHED); break
-      default:
-        result = Result.of(new MappingException("Cannot map unkown satus value: $statusString."))
-    }
-    return result
+    return Result.of(KnownSampleStatus.fromLimsStatus(statusString)
+            .map(it -> it.qbicStatus)
+            .orElseGet(() -> new MappingException("Cannot map unknown status value: $statusString.")))
   }
 
   /**
    * <b>Class MappingException</b>
-   * <p>Small mapping exception class that can be used when sample status mapping fails</p>
-   */
+   * <p>Small mapping exception class that can be used when sample status mapping fails</p>*/
   class MappingException extends RuntimeException {
 
     MappingException(String message) {
@@ -59,5 +63,3 @@ class SampleStatusMapper implements Function<String, Result<String, Exception>> 
     }
   }
 }
-
-
