@@ -42,6 +42,7 @@ Furthermore, the names of the properties providing this information needs to be 
 * The sample status may contain values
   from `["Sample received", "QC passed", "QC failed", "Library completed"]`.
 
+Besides that you can configure LIMS statuses this tools will ignore. For this pass a comma-separated list in the `LIMS_IGNORED_STATUSES` environment variable.
 This tool acts in the role of a user configured by you. Please make sure, that the configured user
 only sees projects where you want to propagate the status to the sample-tracking system.
 
@@ -104,6 +105,7 @@ For this application to be run the following environment variables need to be se
 | `LIMS_USER`                         | The user to access the OpenBiS LIMS                                                           |                                        |
 | `LIMS_BARCODE_PROPERTY`             | The name of the property in the OpenBiS LIMS from which to read the QBiC barcode              |                                        |
 | `LIMS_STATUS_PROPERTY`              | The name of the property in the OpenBis LIMS from which to read the sample status information |                                        |
+| `LIMS_IGNORED_STATUSES`             | A comma-separated list of LIMS sample statuses to be ignored by the reporter                  |                                        |
 | `SAMPLE_TRACKING_AUTH_PASSWORD`     | The password for the sample tracking user                                                     | `astrongpassphrase! `                  |
 | `SAMPLE_TRACKING_AUTH_USER`         | The username for the sample tracking service                                                  | `qbic`                                 |
 | `SAMPLE_TRACKING_LOCATION_ENDPOINT` | The endpoint to list all locations. This does not contain the base url                        | `/locations`                           |
