@@ -11,11 +11,12 @@ import life.qbic.samplestatus.reporter.SampleUpdate
 import life.qbic.samplestatus.reporter.api.LimsQueryService
 import life.qbic.samplestatus.reporter.services.utils.SampleStatusMapper
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 import java.time.Instant
+
+import static java.util.Objects.requireNonNull
 
 /**
  * <b>Class RealLimsQueryService</b>
@@ -27,7 +28,6 @@ import java.time.Instant
  * @since 1.0.0
  */
 @Component
-@ConfigurationProperties
 class RealLimsQueryService implements LimsQueryService {
 
   private IApplicationServerApi openBisApplicationServerApi
@@ -40,7 +40,7 @@ class RealLimsQueryService implements LimsQueryService {
 
   private SampleStatusMapper statusMapper
 
-  private List<String> ignoredStatusValues = ["Sequencing completed"]
+  private List<String> ignoredStatusValues
 
 
   /**
@@ -66,13 +66,15 @@ class RealLimsQueryService implements LimsQueryService {
                        @Value('${service.openbis.lims.server.api.url}') String applicationServerUrl,
                        @Value('${service.openbis.lims.sampleinformation.status}') String sampleStatusProperty,
                        @Value('${service.openbis.lims.sampleinformation.barcode}') String qbicBarcodeProperty,
+                       @Value('${service.openbis.lims.sampleinformation.status.ignored}') List<String> ignoredStatuses,
                        @Value('${service.openbis.server.timeout}') Integer serverTimeout) {
     this.openBisApplicationServerApi = HttpInvokerUtils.createServiceStub(
             IApplicationServerApi.class,
             applicationServerUrl + IApplicationServerApi.SERVICE_URL, serverTimeout)
     sessionToken = this.openBisApplicationServerApi.login(openbisUser, openbisPassword)
-    this.qbicBarcodeProperty = Objects.requireNonNull(qbicBarcodeProperty)
-    this.sampleStatusProperty = Objects.requireNonNull(sampleStatusProperty)
+    this.qbicBarcodeProperty = requireNonNull(qbicBarcodeProperty)
+    this.sampleStatusProperty = requireNonNull(sampleStatusProperty)
+    this.ignoredStatusValues = requireNonNull(ignoredStatuses)
     if (qbicBarcodeProperty.isEmpty()) {
       throw new IllegalArgumentException("Provided barcode property '$qbicBarcodeProperty' must not be empty.")
     }
