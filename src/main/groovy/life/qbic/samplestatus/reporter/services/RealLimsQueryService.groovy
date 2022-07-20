@@ -105,7 +105,7 @@ class RealLimsQueryService implements LimsQueryService {
   List<Result<SampleUpdate, Exception>> getUpdatedSamples(Instant updatedSince) {
     SampleSearchCriteria criteria = new SampleSearchCriteria()
     // we make sure that the barcode is set, otherwise the sample is of no interest to us
-    criteria.withProperty(qbicBarcodeProperty).thatContains("Q")
+    criteria.withProperty(qbicBarcodeProperty).thatStartsWith("Q")
     // only fetch latest samples
     criteria.withModificationDate().thatIsLaterThanOrEqualTo(Date.from(updatedSince))
 
