@@ -85,7 +85,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
         protected static String createJsonFromStatus(String status, Instant arrivalTime) {
             Map parameters = new HashMap()
             parameters.add("status" : status)
-            parameters.add("validFrom" : mapToDateTimeString(arrivalTime))
+            parameters.add("validFrom" : arrivalTime.toString())
             return JsonOutput.toJson(parameters)
         }
 
