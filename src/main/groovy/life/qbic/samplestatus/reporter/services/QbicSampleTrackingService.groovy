@@ -76,7 +76,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
         String statusJson = DtoMapper.createJsonFromStatus(status, timestamp)
         HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), statusJson)
         if (response.statusCode() != 200) {
-            throw new SampleUpdateException("Could not update $sampleCode to ${location.getLabel()} - ${response.statusCode()} : ${response.headers()}: ${response.body()}")
+            throw new SampleUpdateException("Could not update $sampleCode to ${response.statusCode()} : ${response.headers()}: ${response.body()}")
         }
     }
 
@@ -87,13 +87,6 @@ class QbicSampleTrackingService implements SampleTrackingService {
             parameters.add("status" : status)
             parameters.add("validFrom" : arrivalTime.toString())
             return JsonOutput.toJson(parameters)
-        }
-
-        private static String mapToDateTimeString(Instant timestamp) {
-            // the pattern mentioned here is dictated by the data-model-lib location object
-            var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'Z'")
-                    .withZone(ZoneId.from(UTC))
-            return dateTimeFormatter.format(timestamp)
         }
     }
 }
