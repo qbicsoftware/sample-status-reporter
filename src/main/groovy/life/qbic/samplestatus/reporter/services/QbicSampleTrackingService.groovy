@@ -1,7 +1,6 @@
 package life.qbic.samplestatus.reporter.services
 
 import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
 import life.qbic.samplestatus.reporter.api.SampleTrackingService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -12,10 +11,6 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-import static java.time.ZoneOffset.UTC
 
 /**
  *
@@ -59,7 +54,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
     }
 
     private URI createSampleUpdateURI(String sampleCode) {
-        return URI.create("${sampleTrackingBaseUrl}/samples/${sampleCode}/status/")
+        return URI.create("${endpointPath}/${sampleCode}/status/")
     }
 
     private Authenticator getAuthenticator() {
