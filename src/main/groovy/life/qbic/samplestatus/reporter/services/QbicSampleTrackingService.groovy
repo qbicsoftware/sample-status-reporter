@@ -1,7 +1,6 @@
 package life.qbic.samplestatus.reporter.services
 
 import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
 import life.qbic.samplestatus.reporter.api.SampleTrackingService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -12,10 +11,6 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-import static java.time.ZoneOffset.UTC
 
 /**
  *
@@ -46,7 +41,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
         endpointPath = sampleTrackingBaseUrl + endpoint
     }
 
-    private HttpResponse<String> requestSampleUpdate(URI requestURI, String statusJson) {
+    private void requestSampleUpdate(URI requestURI, String statusJson) {
         HttpRequest request = HttpRequest
                 .newBuilder(requestURI)
                 .header("Content-Type", "application/json")
@@ -55,11 +50,14 @@ class QbicSampleTrackingService implements SampleTrackingService {
         HttpClient client = HttpClient.newBuilder()
                 .authenticator(getAuthenticator())
                 .build()
-        return client.send(request, HttpResponse.BodyHandlers.ofString())
+        HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        if (response.statusCode() != 200) {
+            throw new SampleUpdateException("Could not update $sampleCode to ${response.statusCode()} : ${response.headers()}: ${response.body()}")
+        }
     }
 
     private URI createSampleUpdateURI(String sampleCode) {
-        return URI.create("${sampleTrackingBaseUrl}/samples/${sampleCode}/status/")
+        return URI.create("${endpointPath}/${sampleCode}/status/")
     }
 
     private Authenticator getAuthenticator() {
@@ -73,19 +71,16 @@ class QbicSampleTrackingService implements SampleTrackingService {
 
     @Override
     void updateSampleStatus(String sampleCode, String status, Instant timestamp) throws SampleUpdateException {
-        String statusJson = DtoMapper.createJsonFromStatus(status, timestamp)
-        HttpResponse<String> response = requestSampleUpdate(createSampleUpdateURI(sampleCode), statusJson)
-        if (response.statusCode() != 200) {
-            throw new SampleUpdateException("Could not update $sampleCode to ${response.statusCode()} : ${response.headers()}: ${response.body()}")
-        }
+        String requestJson = DtoMapper.createUpdateRequestJson(status, timestamp)
+        requestSampleUpdate(createSampleUpdateURI(sampleCode), requestJson)
     }
 
     private static class DtoMapper {
 
-        protected static String createJsonFromStatus(String status, Instant arrivalTime) {
-            Map parameters = new HashMap()
-            parameters.add("status" : status)
-            parameters.add("validFrom" : arrivalTime.toString())
+        protected static String createUpdateRequestJson(String status, Instant arrivalTime) {
+            Map<String, String> parameters = new HashMap()
+            parameters["status"] = status
+            parameters["validSince"] = arrivalTime.toString()
             return JsonOutput.toJson(parameters)
         }
     }
