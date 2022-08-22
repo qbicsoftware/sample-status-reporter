@@ -26,8 +26,7 @@ sample statuses from an openBis LIMS to the
 
 To propagate information to the sample-tracking service, the app queries the following endpoints:
 
-* `GET /locations`
-* `PUT /samples/{sampleCode}/currentLocation/`
+* `PUT /v2/samples/{sampleCode}/status/`
 
 Please see
 the [sample-tracking-service SwaggerHub](https://app.swaggerhub.com/apis-docs/qbic/sample-tracking/)
