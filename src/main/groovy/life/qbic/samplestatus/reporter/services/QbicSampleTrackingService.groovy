@@ -52,7 +52,7 @@ class QbicSampleTrackingService implements SampleTrackingService {
                 .build()
         HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString())
         if (response.statusCode() != 200) {
-            throw new SampleUpdateException("Could not update $sampleCode to ${response.statusCode()} : ${response.headers()}: ${response.body()}")
+            throw new SampleUpdateException("Could not update $statusJson : ${response.headers()}: ${response.body()}")
         }
     }
 
