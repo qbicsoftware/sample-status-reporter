@@ -1,6 +1,7 @@
 <div align="center">
 
 # LIMS Sample Status Reporter
+Test feature
 
 <i>A command line tool to report LIMS changes to the sample-tracking service</i>.
 
