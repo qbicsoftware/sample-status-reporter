@@ -1,0 +1,9 @@
+feature:
+  - any:
+      - head-branch: [ '^feature' ]
+fix:
+  - any:
+      - head-branch: [ '^fix', '^hotfix' ]
+chore:
+  - any:
+      - head-branch: [ '^chore', '^documentation', '^docs', '^ci', '^refactor' ]
