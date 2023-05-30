@@ -24,6 +24,8 @@ sample statuses from an openBis LIMS to the
 
 **Interaction with the sample-tracking-service**
 
+TEST
+
 To propagate information to the sample-tracking service, the app queries the following endpoints:
 
 * `PUT /v2/samples/{sampleCode}/status/`
