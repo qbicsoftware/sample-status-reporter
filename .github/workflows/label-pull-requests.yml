@@ -8,7 +8,7 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - uses: TimonVS/pr-labeler-action@v3
+      - uses: TimonVS/pr-labeler-action@v4
         with:
           configuration-path: .github/pr-labels.yml # optional, .github/pr-labeler.yml is the default value
         env:
